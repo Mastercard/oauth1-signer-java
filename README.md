@@ -3,6 +3,7 @@
   * [Compatibility](#compatibility)
   * [References](#references)
 - [Usage](#usage)
+  * [Maven](#maven)
   * [Prerequisites](#prerequisites)
   * [Creating a valid OAuth string](#creating-a-valid-oauth-string)
   * [Using HTTP client helpers](#using-http-client-helpers)
@@ -22,6 +23,16 @@ Java 1.6+
 [Body hash extension for non application/x-www-form-urlencoded payloads](https://tools.ietf.org/id/draft-eaton-oauth-bodyhash-00.html)
 
 # Usage
+## Maven
+
+```
+<dependency>
+    <groupId>com.mastercard.developer</groupId>
+    <artifactId>oauth1-signer</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
 ## Prerequisites
 Before using this library, you will need to set up a project and key in the [Mastercard Developers Portal](https://developer.mastercard.com). 
 
