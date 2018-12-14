@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.mastercard.developer</groupId>
-    <artifactId>oauth-signer</artifactId>
+    <artifactId>oauth1-signer</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
