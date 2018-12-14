@@ -11,7 +11,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.util.EntityUtils;
 
 /**
- * Utility method for signing Apache HTTP Client 4 requests.
+ * Utility class for signing Apache HTTP Client 4 requests.
  */
 public class ApacheHttpClient4Signer extends AbstractSigner {
 

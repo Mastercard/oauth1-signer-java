@@ -5,19 +5,22 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.security.PrivateKey;
+
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okio.Buffer;
 
 /**
- * Utility method for signing Java OkHttp requests.
+ * Utility class for signing Java OkHttp3 requests.
  */
 public class OkHttpSigner extends AbstractSigner {
-  private final Charset charset;
 
   public OkHttpSigner(String consumerKey, PrivateKey signingKey) {
-    super(consumerKey, signingKey);
-    //OkHttp uses UTF-8 by default
-    this.charset = Charset.forName("UTF-8");
+    super(Charset.forName("UTF-8"), consumerKey, signingKey);
+  }
+
+  public OkHttpSigner(Charset charset, String consumerKey, PrivateKey signingKey) {
+    super(charset, consumerKey, signingKey);
   }
 
   public void sign(Request.Builder req) throws IOException {
@@ -27,7 +30,8 @@ public class OkHttpSigner extends AbstractSigner {
     String method = builtRequest.method();
     String payload = null;
 
-    if (builtRequest.body().contentLength() > 0) {
+    RequestBody body = builtRequest.body();
+    if (null != body && body.contentLength() > 0) {
       Buffer buffer = new Buffer();
       builtRequest.body().writeTo(buffer);
       payload = buffer.readUtf8();

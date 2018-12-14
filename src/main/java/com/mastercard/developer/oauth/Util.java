@@ -4,7 +4,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 
-public class Util {
+public final class Util {
+
+  private Util() {
+  }
+
   private static final char[] b64chars = {
       'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
       'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
@@ -15,7 +19,8 @@ public class Util {
    * Percent encodes entities as per https://tools.ietf.org/html/rfc3986
    *
    * @param str - string to encode
-   * @return The percent encoded string
+   * @param charset - desired charset encoding
+   * @return The percent encoded string in specified charset encoding
    */
   public static String percentEncode(String str, Charset charset) {
     if (str == null || str.isEmpty()) {
