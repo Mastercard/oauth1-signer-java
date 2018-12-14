@@ -88,7 +88,7 @@ ApacheHttpClient4Signer signer = new ApacheHttpClient4Signer(consumerKey, signin
 signer.sign(httpPost);
 ```
 
-### OkHttp
+### OkHttp 3.x
 ```java
 MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 String payload = "{\"foo\":\"bar\"}";
