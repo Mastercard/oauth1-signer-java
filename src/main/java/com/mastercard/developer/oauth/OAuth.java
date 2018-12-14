@@ -20,11 +20,18 @@ import java.util.TreeMap;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+/**
+ * Performs OAuth1.0a compliant signing with body hash support for non-urlencoded content types.
+ */
 public class OAuth {
+
+  private OAuth() {
+  }
+
   public static final String EMPTY_STRING = "";
   public static final String AUTHORIZATION_HEADER_NAME = "Authorization";
 
-  private final static Logger LOG = Logger.getLogger(OAuth.class.getName());
+  private static final Logger LOG = Logger.getLogger(OAuth.class.getName());
   private static final String SHA_BITS = "256";
 
   /**
@@ -87,7 +94,6 @@ public class OAuth {
         Util.percentEncode(paramString, charset);
 
     LOG.fine("Generated SBS: " + sbs);
-
     return sbs;
   }
 
@@ -108,7 +114,7 @@ public class OAuth {
     final TreeMap<String, List<String>> queryPairs = new TreeMap<String, List<String>>();
     final String[] pairs = queryParams.split("&");
     for (String pair : pairs) {
-      final int idx = pair.indexOf("=");
+      final int idx = pair.indexOf('=');
       String key = idx > 0 ? pair.substring(0, idx) : pair;
       if (!queryPairs.containsKey(key)) {
         key = Util.percentEncode(key, charset);
@@ -200,9 +206,9 @@ public class OAuth {
     String authority = uri.getAuthority().toLowerCase();
 
     // Remove port if it matches the default for scheme
-    if ((scheme.equals("http") && uri.getPort() == 80)
-        || (scheme.equals("https") && uri.getPort() == 443)) {
-      int index = authority.lastIndexOf(":");
+    if (("http".equals(scheme) && uri.getPort() == 80)
+        || ("https".equals(scheme) && uri.getPort() == 443)) {
+      int index = authority.lastIndexOf(':');
       if (index >= 0) {
         authority = authority.substring(0, index);
       }

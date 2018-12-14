@@ -8,14 +8,12 @@ import java.security.PrivateKey;
 import javax.net.ssl.HttpsURLConnection;
 
 /**
- * Utility method for signing Java HttpsURLConnection requests.
+ * Utility class for signing Java HttpsURLConnection requests.
  */
 public class HttpsUrlConnectionSigner extends AbstractSigner {
-  private final Charset charset;
 
   public HttpsUrlConnectionSigner(Charset charset, String consumerKey, PrivateKey signingKey) {
-    super(consumerKey, signingKey);
-    this.charset = charset;
+    super(charset, consumerKey, signingKey);
   }
 
   public void sign(HttpsURLConnection req, String payload) {
