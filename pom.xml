@@ -6,7 +6,43 @@
 
     <groupId>com.mastercard.developer</groupId>
     <artifactId>oauth1-signer</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <description>Zero dependency library for generating a Mastercard API compliant OAuth signature</description>
+    <url>https://developer.mastercard.com</url>
+    <name>oauth1-signer</name>
+
+    <scm>
+        <connection>scm:git:git://github.com/Mastercard/oauth1-signer-java.git</connection>
+        <developerConnection>scm:git:git@github.com:Mastercard/oauth1-signer-java.git</developerConnection>
+        <url>https://github.com/Mastercard/oauth1-signer-java</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <email>APISupport@mastercard.com</email>
+            <organization>Mastercard Worldwide</organization>
+            <organizationUrl>https://developer.mastercard.com</organizationUrl>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>BSD-2 License</name>
+            <url>http://opensource.org/licenses/BSD-2-Clause</url>
+        </license>
+    </licenses>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh - snapshot</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <dependencies>
         <dependency>
