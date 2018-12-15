@@ -31,7 +31,10 @@ As part of this set up, you'll receive credentials for your app:
 
 ```java
 String consumerKey = "<insert consumer key>";
-PrivateKey signingKey = SecurityUtils.loadPrivateKey("<insert PKCS#12 key file path>", "<insert key alias>", "<insert key password>");
+PrivateKey signingKey = SecurityUtils.loadPrivateKey(
+						"<insert PKCS#12 key file path>", 
+						"<insert key alias>", 
+						"<insert key password>");
 ```
 
 ## Maven <a name="maven"></a>
@@ -45,11 +48,14 @@ PrivateKey signingKey = SecurityUtils.loadPrivateKey("<insert PKCS#12 key file p
 ```
 
 ## Creating the OAuth Authorization Header <a name="creating-the-oauth-authorization-header"></a>
-The method that does all the heavy lifting is `OAuth.getAuthorizationHeader`. You can call into it directly and as long as you provide the correct parameters, it will return a string that you can add into your request's `Authorization` header. 
+The method that does all the heavy lifting is `OAuth.getAuthorizationHeader`. You can call into it directly and as long as you provide the correct parameters, it will return a string that you can add into your request's `Authorization` header.
 
 ```java
 String consumerKey = "<insert consumer key>";
-PrivateKey signingKey = SecurityUtils.loadPrivateKey("<insert PKCS#12 key file path>", "<insert key alias>", "<insert key password>");
+PrivateKey signingKey = SecurityUtils.loadPrivateKey(
+						"<insert PKCS#12 key file path>", 
+						"<insert key alias>", 
+						"<insert key password>");
 
 URI uri = URI.create("https://sandbox.api.mastercard.com/service");
 String method = "GET";
@@ -61,8 +67,10 @@ String authHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, 
 
 ## Signing HTTP Client Request Objects <a name="signing-http-client-request-objects"></a>
 
-Alternatively, you can use helper classes for some of the commonly used HTTP clients. 
-These classes (provided in the `com.mastercard.developer.signers` package) will modify the provided request object in-place and will add the correct `Authorization` header. 
+Alternatively, you can use helper classes for some of the commonly used HTTP clients.
+
+These classes, provided in the `com.mastercard.developer.signers` package, will modify the provided request object in-place and will add the correct `Authorization` header.
+
 Once instantiated with a consumer key and private key, these objects can be reused. Usage briefly described below, but you can also refer to the test package for examples. 
 
 + [Java HttpsURLConnection](#java-httpsurlconnection)
@@ -114,6 +122,7 @@ signer.sign(request);
 
 [OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator) generates API client libraries from [OpenAPI Specs](https://github.com/OAI/OpenAPI-Specification). 
 It provides generators and library templates for supporting multiple languages and frameworks.
+
 The `com.mastercard.developer.interceptors` package will provide you with some request interceptor classes you can use when configuring your API client. These classes will take care of adding the correct `Authorization` header before sending the request.
 
 + [okhttp-gson](#okhttp-gson)
