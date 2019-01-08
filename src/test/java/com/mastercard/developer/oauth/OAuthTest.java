@@ -17,6 +17,8 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import com.mastercard.developer.test.TestUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -145,6 +147,12 @@ public class OAuthTest {
   }
 
   @Test
+  public void testSignSignatureBaseString() throws Exception {
+    String expectedSignatureString = "IJeNKYGfUhFtj5OAPRI92uwfjJJLCej3RCMLbp7R6OIYJhtwxnTkloHQ2bgV7fks4GT/A7rkqrgUGk0ewbwIC6nS3piJHyKVc7rvQXZuCQeeeQpFzLRiH3rsb+ZS+AULK+jzDje4Fb+BQR6XmxuuJmY6YrAKkj13Ln4K6bZJlSxOizbNvt+Htnx+hNd4VgaVBeJKcLhHfZbWQxK76nMnjY7nDcM/2R6LUIR2oLG1L9m55WP3bakAvmOr392ulv1+mWCwDAZZzQ4lakDD2BTu0ZaVsvBW+mcKFxYeTq7SyTQMM4lEwFPJ6RLc8jJJ+veJXHekLVzWg4qHRtzNBLz1mA==";
+    assertEquals(expectedSignatureString, OAuth.signSignatureBaseString("baseString", TestUtils.getTestPrivateKey(), Charset.forName("UTF-8")));
+  }
+
+  @Test
   public void urlNormalizationRedundantPorts() throws Exception {
     URI uri = new URI("https://api.mastercard.com:443/test?query=param");
     String baseUri = OAuth.getBaseUriString(uri);
@@ -175,9 +183,9 @@ public class OAuthTest {
 
   @Test
   public void urlNormalizationLowercaseSchemeAndHost() throws Exception {
-    URI uri = new URI("HTTPS://API.mastercard.com/test");
+    URI uri = new URI("HTTPS://API.MASTERCARD.COM/TEST");
     String baseUri = OAuth.getBaseUriString(uri);
-    assertEquals("https://api.mastercard.com/test", baseUri);
+    assertEquals("https://api.mastercard.com/TEST", baseUri);
   }
 
   @Test

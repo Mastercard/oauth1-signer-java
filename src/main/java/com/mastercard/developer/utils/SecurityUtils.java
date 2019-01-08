@@ -5,11 +5,17 @@ import java.io.IOException;
 import java.security.*;
 import java.security.cert.CertificateException;
 
+/**
+ * Utility class.
+ */
 public final class SecurityUtils {
 
     private SecurityUtils() {
     }
 
+    /**
+     * Load a RSA key out of a PKCS#12 container.
+     */
     public static PrivateKey loadPrivateKey(String pkcs12KeyFilePath,
                                             String signingKeyAlias,
                                             String signingKeyPassword) throws IOException, NoSuchProviderException, KeyStoreException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {

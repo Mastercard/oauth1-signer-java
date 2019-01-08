@@ -237,7 +237,7 @@ public class OAuth {
    * @param charset Charset encoding of the request
    * @return RSA signature matching the contents of signature base string
    */
-  private static String signSignatureBaseString(String sbs, PrivateKey signingKey, Charset charset) {
+  static String signSignatureBaseString(String sbs, PrivateKey signingKey, Charset charset) {
     Signature signer;
     try {
       signer = Signature.getInstance("SHA256withRSA");
