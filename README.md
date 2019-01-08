@@ -1,6 +1,7 @@
 # oauth1-signer-java
 
 [![Build Status](https://travis-ci.org/Mastercard/oauth1-signer-java.svg?branch=master)](https://travis-ci.org/Mastercard/oauth1-signer-java)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.mastercard.developer/oauth1-signer/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.mastercard.developer/oauth1-signer)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/Mastercard/oauth1-signer-java/blob/master/LICENSE)
 
 
