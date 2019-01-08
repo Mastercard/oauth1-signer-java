@@ -15,7 +15,6 @@
   * [Creating the OAuth Authorization Header](#creating-the-oauth-authorization-header)
   * [Signing HTTP Client Request Objects](#signing-http-client-request-objects)
   * [Integrating with OpenAPI Generator API Client Libraries](#integrating-with-openapi-generator-api-client-libraries)
-  
 
 ## Overview <a name="overview"></a>
 Zero dependency library for generating a Mastercard API compliant OAuth signature.
@@ -49,7 +48,7 @@ PrivateKey signingKey = SecurityUtils.loadPrivateKey(
 <dependency>
     <groupId>com.mastercard.developer</groupId>
     <artifactId>oauth1-signer</artifactId>
-    <version>1.1.0</version>
+    <version>${oauth1-signer-version}</version>
 </dependency>
 ```
 
