@@ -1,28 +1,34 @@
-# Table of Contents
+# oauth1-signer-java
+
+[![Build Status](https://travis-ci.org/Mastercard/oauth1-signer-java.svg?branch=master)](https://travis-ci.org/Mastercard/oauth1-signer-java)
+[![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/Mastercard/oauth1-signer-java/blob/master/LICENSE)
+
+
+## Table of Contents
 - [Overview](#overview)
   * [Compatibility](#compatibility)
   * [References](#references)
 - [Usage](#usage)
   * [Prerequisites](#prerequisites)
-  * [Maven](#maven)
+  * [Maven Dependency](#maven-dependency)
   * [Creating the OAuth Authorization Header](#creating-the-oauth-authorization-header)
   * [Signing HTTP Client Request Objects](#signing-http-client-request-objects)
   * [Integrating with OpenAPI Generator API Client Libraries](#integrating-with-openapi-generator-api-client-libraries)
   
 
-# Overview <a name="overview"></a>
+## Overview <a name="overview"></a>
 Zero dependency library for generating a Mastercard API compliant OAuth signature.
 
-## Compatibility <a name="compatibility"></a>
+### Compatibility <a name="compatibility"></a>
 Java 1.6+
 
-## References <a name="references"></a>
+### References <a name="references"></a>
 [OAuth 1.0a specification](https://tools.ietf.org/html/rfc5849)
 
 [Body hash extension for non application/x-www-form-urlencoded payloads](https://tools.ietf.org/id/draft-eaton-oauth-bodyhash-00.html)
 
-# Usage <a name="usage"></a>
-## Prerequisites <a name="prerequisites"></a>
+## Usage <a name="usage"></a>
+### Prerequisites <a name="prerequisites"></a>
 Before using this library, you will need to set up a project in the [Mastercard Developers Portal](https://developer.mastercard.com). 
 
 As part of this set up, you'll receive credentials for your app:
@@ -37,7 +43,7 @@ PrivateKey signingKey = SecurityUtils.loadPrivateKey(
 						"<insert key password>");
 ```
 
-## Maven <a name="maven"></a>
+### Maven Dependency <a name="maven-dependency"></a>
 
 ```
 <dependency>
@@ -47,7 +53,7 @@ PrivateKey signingKey = SecurityUtils.loadPrivateKey(
 </dependency>
 ```
 
-## Creating the OAuth Authorization Header <a name="creating-the-oauth-authorization-header"></a>
+### Creating the OAuth Authorization Header <a name="creating-the-oauth-authorization-header"></a>
 The method that does all the heavy lifting is `OAuth.getAuthorizationHeader`. You can call into it directly and as long as you provide the correct parameters, it will return a string that you can add into your request's `Authorization` header.
 
 ```java
@@ -65,19 +71,19 @@ Charset charset = Charset.forName("UTF-8");
 String authHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey);
 ```
 
-## Signing HTTP Client Request Objects <a name="signing-http-client-request-objects"></a>
+### Signing HTTP Client Request Objects <a name="signing-http-client-request-objects"></a>
 
 Alternatively, you can use helper classes for some of the commonly used HTTP clients.
 
-These classes, provided in the `com.mastercard.developer.signers` package, will modify the provided request object in-place and will add the correct `Authorization` header.
+These classes, provided in the `com.mastercard.developer.signers` package, will modify the provided request object in-place and will add the correct `Authorization` header. Once instantiated with a consumer key and private key, these objects can be reused. 
 
-Once instantiated with a consumer key and private key, these objects can be reused. Usage briefly described below, but you can also refer to the test package for examples. 
+Usage briefly described below, but you can also refer to the test package for examples. 
 
 + [Java HttpsURLConnection](#java-httpsurlconnection)
 + [Apache HTTP Client 4](#apache-http-client-4)
 + [OkHttp 3](#okhttp-3)
 
-### Java HttpsURLConnection <a name="java-httpsurlconnection"></a>
+#### Java HttpsURLConnection <a name="java-httpsurlconnection"></a>
 ```java
 Charset charset = Charset.forName("UTF-8");
 URL url = new URL("https://sandbox.api.mastercard.com/service");
@@ -91,7 +97,7 @@ HttpsUrlConnectionSigner signer = new HttpsUrlConnectionSigner(charset, consumer
 signer.sign(con, payload);
 ```
 
-### Apache HTTP Client 4 <a name="apache-http-client-4"></a>
+#### Apache HTTP Client 4 <a name="apache-http-client-4"></a>
 ```java
 String payload = "{\"foo\":\"bar\"}";
 
@@ -103,7 +109,7 @@ ApacheHttpClient4Signer signer = new ApacheHttpClient4Signer(consumerKey, signin
 signer.sign(httpPost);
 ```
 
-### OkHttp 3 <a name="okhttp-3"></a>
+#### OkHttp 3 <a name="okhttp-3"></a>
 ```java
 MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 String payload = "{\"foo\":\"bar\"}";
@@ -118,7 +124,7 @@ OkHttpSigner signer = new OkHttpSigner(consumerKey, signingKey);
 signer.sign(request);
 ```
 
-## Integrating with OpenAPI Generator API Client Libraries <a name="integrating-with-openapi-generator-api-client-libraries"></a>
+### Integrating with OpenAPI Generator API Client Libraries <a name="integrating-with-openapi-generator-api-client-libraries"></a>
 
 [OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator) generates API client libraries from [OpenAPI Specs](https://github.com/OAI/OpenAPI-Specification). 
 It provides generators and library templates for supporting multiple languages and frameworks.
@@ -131,8 +137,8 @@ The `com.mastercard.developer.interceptors` package will provide you with some r
 + [retrofit2](#retrofit2)
 + [google-api-client](#google-api-client)
 
-### okhttp-gson <a name="okhttp-gson"></a>
-#### OpenAPI Generator Plugin Configuration
+#### okhttp-gson <a name="okhttp-gson"></a>
+##### OpenAPI Generator Plugin Configuration
 ```
 <configuration>
     <inputSpec>${project.basedir}/src/main/resources/openapi-spec.yaml</inputSpec>
@@ -142,7 +148,7 @@ The `com.mastercard.developer.interceptors` package will provide you with some r
 </configuration>
 ```
 
-#### Usage of The OkHttp2OAuth1Interceptor
+##### Usage of the OkHttp2OAuth1Interceptor
 ```java
 ApiClient client = new ApiClient();
 client.setBasePath("https://sandbox.api.mastercard.com");
@@ -152,8 +158,8 @@ ServiceApi serviceApi = new ServiceApi(client);
 // ...
 ```
 
-### feign <a name="feign"></a>
-#### OpenAPI Generator Plugin Configuration
+#### feign <a name="feign"></a>
+##### OpenAPI Generator Plugin Configuration
 ```
 <configuration>
     <inputSpec>${project.basedir}/src/main/resources/openapi-spec.yaml</inputSpec>
@@ -163,7 +169,7 @@ ServiceApi serviceApi = new ServiceApi(client);
 </configuration>
 ```
 
-#### Usage of The OpenFeignOAuth1Interceptor
+##### Usage of the OpenFeignOAuth1Interceptor
 ```java
 ApiClient client = new ApiClient();
 client.setBasePath("https://sandbox.api.mastercard.com");
@@ -175,8 +181,8 @@ ServiceApi serviceApi = client.buildClient(ServiceApi.class);
 // ...
 ```
 
-### retrofit <a name="retrofit"></a>
-#### OpenAPI Generator Plugin Configuration
+#### retrofit <a name="retrofit"></a>
+##### OpenAPI Generator Plugin Configuration
 ```
 <configuration>
     <inputSpec>${project.basedir}/src/main/resources/openapi-spec.yaml</inputSpec>
@@ -186,7 +192,7 @@ ServiceApi serviceApi = client.buildClient(ServiceApi.class);
 </configuration>
 ```
 
-#### Usage of The OkHttp2OAuth1Interceptor
+##### Usage of the OkHttp2OAuth1Interceptor
 ```java
 ApiClient client = new ApiClient();
 RestAdapter.Builder adapterBuilder = client.getAdapterBuilder();
@@ -197,8 +203,8 @@ ServiceApi serviceApi = client.createService(ServiceApi.class);
 // ...
 ```
 
-### retrofit2 <a name="retrofit2"></a>
-#### OpenAPI Generator Plugin Configuration
+#### retrofit2 <a name="retrofit2"></a>
+##### OpenAPI Generator Plugin Configuration
 ```
 <configuration>
     <inputSpec>${project.basedir}/src/main/resources/openapi-spec.yaml</inputSpec>
@@ -208,7 +214,7 @@ ServiceApi serviceApi = client.createService(ServiceApi.class);
 </configuration>
 ```
 
-#### Usage of The OkHttpOAuth1Interceptor
+##### Usage of the OkHttpOAuth1Interceptor
 ```java
 ApiClient client = new ApiClient();
 Retrofit.Builder adapterBuilder = client.getAdapterBuilder();
@@ -219,8 +225,8 @@ ServiceApi serviceApi = client.createService(ServiceApi.class);
 // ...
 ```
 
-### google-api-client <a name="google-api-client"></a>
-#### OpenAPI Generator Plugin Configuration
+#### google-api-client <a name="google-api-client"></a>
+##### OpenAPI Generator Plugin Configuration
 ```
 <configuration>
     <inputSpec>${project.basedir}/src/main/resources/openapi-spec.yaml</inputSpec>
@@ -230,7 +236,7 @@ ServiceApi serviceApi = client.createService(ServiceApi.class);
 </configuration>
 ```
 
-#### Usage of The OAuth1HttpExecuteInterceptor
+##### Usage of the OAuth1HttpExecuteInterceptor
 ```java
 HttpRequestInitializer initializer = new HttpRequestInitializer() {
     @Override
