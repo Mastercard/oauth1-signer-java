@@ -23,9 +23,8 @@ Zero dependency library for generating a Mastercard API compliant OAuth signatur
 Java 1.6+
 
 ### References <a name="references"></a>
-[OAuth 1.0a specification](https://tools.ietf.org/html/rfc5849)
-
-[Body hash extension for non application/x-www-form-urlencoded payloads](https://tools.ietf.org/id/draft-eaton-oauth-bodyhash-00.html)
+* [OAuth 1.0a specification](https://tools.ietf.org/html/rfc5849)
+* [Body hash extension for non application/x-www-form-urlencoded payloads](https://tools.ietf.org/id/draft-eaton-oauth-bodyhash-00.html)
 
 ## Usage <a name="usage"></a>
 ### Prerequisites <a name="prerequisites"></a>
