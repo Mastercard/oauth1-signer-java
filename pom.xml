@@ -18,6 +18,7 @@
         <google-api-client-version>1.23.0</google-api-client-version>
         <feign-version>9.4.0</feign-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <gpg.signature.skip>false</gpg.signature.skip>
     </properties>
 
     <scm>
@@ -36,8 +37,8 @@
 
     <licenses>
         <license>
-            <name>BSD-2 License</name>
-            <url>http://opensource.org/licenses/BSD-2-Clause</url>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
         </license>
     </licenses>
 
@@ -109,7 +110,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.7.0</version>
+                    <version>3.8.0</version>
                     <configuration>
                         <source>1.6</source>
                         <target>1.6</target>
@@ -129,6 +130,9 @@
                         <goals>
                             <goal>sign</goal>
                         </goals>
+                        <configuration>
+                            <skip>${gpg.signature.skip}</skip>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -148,7 +152,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
                         <id>generate-javadoc</id>
@@ -156,6 +160,9 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                        <configuration>
+                            <additionalOptions>-Xdoclint:none</additionalOptions>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
