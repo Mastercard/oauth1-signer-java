@@ -1,6 +1,5 @@
 language: java
-jdk:
-  - oraclejdk7  
+jdk:  
   - oraclejdk8
   - oraclejdk9
   - openjdk7
@@ -8,5 +7,6 @@ jdk:
   - openjdk9
   - openjdk10
   - openjdk11
+install: true
 script:
   - mvn clean install "-Dgpg.signature.skip=$GPG_SIGNATURE_SKIP"
