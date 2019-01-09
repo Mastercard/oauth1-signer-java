@@ -153,6 +153,18 @@ public class OAuthTest {
   }
 
   @Test
+  public void urlNormalizationRfcExamples() throws Exception {
+    URI uri = new URI("https://www.example.net:8080");
+    String baseUri = OAuth.getBaseUriString(uri);
+    assertEquals("https://www.example.net:8080/", baseUri);
+
+    uri = new URI("http://EXAMPLE.COM:80/r%20v/X?id=123");
+    baseUri = OAuth.getBaseUriString(uri);
+    // /!\ According to https://tools.ietf.org/html/rfc5849#section-3.4.1.2 it seems we should get "r%20v", not "r%2520v"
+    assertEquals("http://example.com/r%2520v/X", baseUri);
+  }
+
+  @Test
   public void urlNormalizationRedundantPorts() throws Exception {
     URI uri = new URI("https://api.mastercard.com:443/test?query=param");
     String baseUri = OAuth.getBaseUriString(uri);
