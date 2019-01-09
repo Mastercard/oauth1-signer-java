@@ -31,4 +31,24 @@ public class OpenFeignSignerTest {
         String authorizationHeaderValue = (String)authorizationHeaders.toArray()[0];
         Assert.assertNotNull(authorizationHeaderValue);
     }
+
+    @Test
+    public void testSign_ShouldNotThrowNullPointerException_WhenEmptyBody() throws Exception {
+
+        // GIVEN
+        PrivateKey signingKey = getTestPrivateKey();
+        String consumerKey = "Some key";
+        RequestTemplate requestTemplate = new RequestTemplate();
+        requestTemplate.method("POST");
+        requestTemplate.append("/service");
+
+        // WHEN
+        OpenFeignSigner instanceUnderTest = new OpenFeignSigner(consumerKey, signingKey, "https://api.mastercard.com/");
+        instanceUnderTest.sign(requestTemplate);
+
+        // THEN
+        Collection<String> authorizationHeaders = requestTemplate.headers().get("Authorization");
+        String authorizationHeaderValue = (String)authorizationHeaders.toArray()[0];
+        Assert.assertNotNull(authorizationHeaderValue);
+    }
 }

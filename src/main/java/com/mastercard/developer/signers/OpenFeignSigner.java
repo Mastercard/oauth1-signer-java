@@ -30,7 +30,8 @@ public class OpenFeignSigner extends AbstractSigner {
             throw new IllegalArgumentException("The provided URL could not be converted to an URI representation", e);
         }
         String method = requestTemplate.method();
-        String payload = new String(requestTemplate.body(), charset);
+        byte[] bodyBytes = requestTemplate.body();
+        String payload = bodyBytes != null ? new String(bodyBytes, charset) : null;
         String authHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey);
         requestTemplate.header(OAuth.AUTHORIZATION_HEADER_NAME, authHeader);
     }
