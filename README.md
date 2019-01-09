@@ -11,7 +11,7 @@
   * [References](#references)
 - [Usage](#usage)
   * [Prerequisites](#prerequisites)
-  * [Maven Dependency](#maven-dependency)
+  * [Adding the Library to Your Project](#adding-the-library-to-your-project)
   * [Creating the OAuth Authorization Header](#creating-the-oauth-authorization-header)
   * [Signing HTTP Client Request Objects](#signing-http-client-request-objects)
   * [Integrating with OpenAPI Generator API Client Libraries](#integrating-with-openapi-generator-api-client-libraries)
@@ -42,8 +42,9 @@ PrivateKey signingKey = SecurityUtils.loadPrivateKey(
 						"<insert key password>");
 ```
 
-### Maven Dependency <a name="maven-dependency"></a>
+### Adding the Library to Your Project <a name="adding-the-library-to-your-project"></a>
 
+#### Maven
 ```
 <dependency>
     <groupId>com.mastercard.developer</groupId>
@@ -51,6 +52,16 @@ PrivateKey signingKey = SecurityUtils.loadPrivateKey(
     <version>${oauth1-signer-version}</version>
 </dependency>
 ```
+
+#### Gradle
+```
+dependencies {
+	implementation "com.mastercard.developer:oauth1-signer:$oauth1SignerVersion"
+}	
+```
+
+#### Other Dependency Managers
+See: https://search.maven.org/artifact/com.mastercard.developer/oauth1-signer
 
 ### Creating the OAuth Authorization Header <a name="creating-the-oauth-authorization-header"></a>
 The method that does all the heavy lifting is `OAuth.getAuthorizationHeader`. You can call into it directly and as long as you provide the correct parameters, it will return a string that you can add into your request's `Authorization` header.
