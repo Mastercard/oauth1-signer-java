@@ -141,11 +141,14 @@ It provides generators and library templates for supporting multiple languages a
 
 The `com.mastercard.developer.interceptors` package will provide you with some request interceptor classes you can use when configuring your API client. These classes will take care of adding the correct `Authorization` header before sending the request.
 
+Generators currently supported:
 + [okhttp-gson](#okhttp-gson)
 + [feign](#feign)
 + [retrofit](#retrofit)
 + [retrofit2](#retrofit2)
 + [google-api-client](#google-api-client)
+
+See also: [CONFIG OPTIONS for java](https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/java.md).
 
 #### okhttp-gson <a name="okhttp-gson"></a>
 ##### OpenAPI Generator Plugin Configuration

@@ -54,9 +54,7 @@ public class OAuth {
     oauthParams.put("oauth_signature_method", "RSA-SHA" + SHA_BITS);
     oauthParams.put("oauth_timestamp", getTimestamp());
     oauthParams.put("oauth_version", "1.0");
-    if (payload != null && !payload.isEmpty()) {
-      oauthParams.put("oauth_body_hash", getBodyHash(payload, charset));
-    }
+    oauthParams.put("oauth_body_hash", getBodyHash(payload, charset));
 
     // Combine query and oauth_ parameters into lexicographically sorted string
     String paramString = toOauthParamString(queryParams, oauthParams);
@@ -286,7 +284,8 @@ public class OAuth {
     }
 
     digest.reset();
-    byte[] byteArray = payload.getBytes(charset);
+    // "If the request does not have an entity body, the hash should be taken over the empty string"
+    byte[] byteArray = null == payload ? "".getBytes() : payload.getBytes(charset); // 
     byte[] hash = digest.digest(byteArray);
 
     return Util.b64Encode(hash);
