@@ -6,6 +6,7 @@ jdk:
   - openjdk9
   - openjdk10
   - openjdk11
+  - openjdk12
 install: true
 script:
   - mvn clean install "-Dgpg.signature.skip=$GPG_SIGNATURE_SKIP"
