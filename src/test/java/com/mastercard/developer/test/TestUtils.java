@@ -7,6 +7,9 @@ import static com.mastercard.developer.utils.SecurityUtils.loadPrivateKey;
 
 public class TestUtils {
 
+    private TestUtils() {
+    }
+
     public static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 
     public static PrivateKey getTestPrivateKey() throws Exception {

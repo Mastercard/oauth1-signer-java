@@ -83,7 +83,7 @@ public class OAuthTest {
     while (!executor.isTerminated()) {
     }
 
-    HashSet<String> dupes = new HashSet<String>(nonces);
+    HashSet<String> dupes = new HashSet<>(nonces);
     if (dupes.size() != randomNonces) {
       fail("Expected " + randomNonces + " but got " + dupes.size());
     }
@@ -91,12 +91,12 @@ public class OAuthTest {
 
   @Test
   public void oauthParamsString() {
-    TreeMap<String, List<String>> params = new TreeMap<String, List<String>>();
+    TreeMap<String, List<String>> params = new TreeMap<>();
     params.put("param2", Arrays.asList("hello"));
     params.put("first_param", Arrays.asList("value", "othervalue"));
     params.put("param3", Arrays.asList("world"));
 
-    HashMap<String, String> oauthParams = new HashMap<String, String>();
+    HashMap<String, String> oauthParams = new HashMap<>();
     oauthParams.put("oauth_nonce", "randomnonce");
     oauthParams.put("oauth_body_hash", "body/hash");
 
@@ -107,11 +107,11 @@ public class OAuthTest {
 
   @Test
   public void signatureBaseString() {
-    TreeMap<String, List<String>> params = new TreeMap<String, List<String>>();
+    TreeMap<String, List<String>> params = new TreeMap<>();
     params.put("param2", Arrays.asList("hello"));
     params.put("first_param", Arrays.asList("value", "othervalue"));
 
-    HashMap<String, String> oauthParams = new HashMap<String, String>();
+    HashMap<String, String> oauthParams = new HashMap<>();
     oauthParams.put("oauth_nonce", "randomnonce");
     oauthParams.put("oauth_body_hash", "body/hash");
 
@@ -131,7 +131,7 @@ public class OAuthTest {
     String method = "POST";
     URI url = URI.create("https://sandbox.api.mastercard.com/fraud/merchant/v1/termination-inquiry?Format=XML&PageOffset=0&PageLength=10");
 
-    HashMap<String, String> oauthParams = new HashMap<String, String>();
+    HashMap<String, String> oauthParams = new HashMap<>();
     oauthParams.put("oauth_consumer_key", "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
     oauthParams.put("oauth_nonce", "1111111111111111111");
     oauthParams.put("oauth_signature_method", "RSA-SHA256");

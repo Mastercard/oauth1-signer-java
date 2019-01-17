@@ -48,7 +48,7 @@ public class OAuth {
   public static String getAuthorizationHeader(URI uri, String method, String payload, Charset charset, String consumerKey, PrivateKey signingKey) {
     TreeMap<String, List<String>> queryParams = extractQueryParams(uri, charset);
 
-    HashMap<String, String> oauthParams = new HashMap<String, String>();
+    HashMap<String, String> oauthParams = new HashMap<>();
     oauthParams.put("oauth_consumer_key", consumerKey);
     oauthParams.put("oauth_nonce", getNonce());
     oauthParams.put("oauth_signature_method", "RSA-SHA" + SHA_BITS);
@@ -106,10 +106,10 @@ public class OAuth {
   static TreeMap<String, List<String>> extractQueryParams(URI uri, Charset charset) {
     final String queryParams = uri.getQuery();
     if (queryParams == null || queryParams.isEmpty()) {
-      return new TreeMap<String, List<String>>();
+      return new TreeMap<>();
     }
 
-    final TreeMap<String, List<String>> queryPairs = new TreeMap<String, List<String>>();
+    final TreeMap<String, List<String>> queryPairs = new TreeMap<>();
     final String[] pairs = queryParams.split("&");
     for (String pair : pairs) {
       final int idx = pair.indexOf('=');
@@ -135,7 +135,7 @@ public class OAuth {
    * @return Correctly encoded and sorted OAuth parameter string
    */
   static String toOauthParamString(SortedMap<String, List<String>> queryParamsMap, Map<String, String> oauthParamsMap) {
-    TreeMap<String, List<String>> consolidatedParams = new TreeMap<String, List<String>>(queryParamsMap);
+    TreeMap<String, List<String>> consolidatedParams = new TreeMap<>(queryParamsMap);
 
     // Add OAuth params to consolidated params map
     for (Map.Entry<String, String> entry : oauthParamsMap.entrySet()) {
