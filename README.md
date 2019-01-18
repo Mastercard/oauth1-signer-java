@@ -12,6 +12,7 @@
 - [Usage](#usage)
   * [Prerequisites](#prerequisites)
   * [Adding the Library to Your Project](#adding-the-library-to-your-project)
+  * [Loading the Signing Key](#loading-the-signing-key) 
   * [Creating the OAuth Authorization Header](#creating-the-oauth-authorization-header)
   * [Signing HTTP Client Request Objects](#signing-http-client-request-objects)
   * [Integrating with OpenAPI Generator API Client Libraries](#integrating-with-openapi-generator-api-client-libraries)
@@ -34,14 +35,6 @@ As part of this set up, you'll receive credentials for your app:
 * A consumer key (displayed on the Mastercard Developer Portal)
 * A private request signing key (matching the public certificate displayed on the Mastercard Developer Portal)
 
-```java
-String consumerKey = "<insert consumer key>";
-PrivateKey signingKey = SecurityUtils.loadPrivateKey(
-						"<insert PKCS#12 key file path>", 
-						"<insert key alias>", 
-						"<insert key password>");
-```
-
 ### Adding the Library to Your Project <a name="adding-the-library-to-your-project"></a>
 
 #### Maven
@@ -63,21 +56,23 @@ dependencies {
 #### Other Dependency Managers
 See: https://search.maven.org/artifact/com.mastercard.developer/oauth1-signer
 
+### Loading the Signing Key <a name="loading-the-signing-key"></a>
+```java
+PrivateKey signingKey = SecurityUtils.loadPrivateKey(
+						"<insert PKCS#12 key file path>", 
+						"<insert key alias>", 
+						"<insert key password>");
+```
+
 ### Creating the OAuth Authorization Header <a name="creating-the-oauth-authorization-header"></a>
 The method that does all the heavy lifting is `OAuth.getAuthorizationHeader`. You can call into it directly and as long as you provide the correct parameters, it will return a string that you can add into your request's `Authorization` header.
 
 ```java
 String consumerKey = "<insert consumer key>";
-PrivateKey signingKey = SecurityUtils.loadPrivateKey(
-						"<insert PKCS#12 key file path>", 
-						"<insert key alias>", 
-						"<insert key password>");
-
 URI uri = URI.create("https://sandbox.api.mastercard.com/service");
 String method = "GET";
 String payload = "Hello world!";
 Charset charset = Charset.forName("UTF-8");
-
 String authHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey);
 ```
 
