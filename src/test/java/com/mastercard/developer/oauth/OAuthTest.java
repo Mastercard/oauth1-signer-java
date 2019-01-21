@@ -90,19 +90,39 @@ public class OAuthTest {
   }
 
   @Test
-  public void oauthParamsString() {
+  public void oauthParamsStringRfcExample() {
     TreeMap<String, List<String>> params = new TreeMap<>();
-    params.put("param2", Arrays.asList("hello"));
-    params.put("first_param", Arrays.asList("value", "othervalue"));
-    params.put("param3", Arrays.asList("world"));
+    params.put("b5", Arrays.asList("%3D%253D"));
+    params.put("a3", Arrays.asList("a", "2%20q"));
+    params.put("c%40", Arrays.asList(""));
+    params.put("a2", Arrays.asList("r%20b"));
+    params.put("c2", Arrays.asList(""));
 
     HashMap<String, String> oauthParams = new HashMap<>();
-    oauthParams.put("oauth_nonce", "randomnonce");
-    oauthParams.put("oauth_body_hash", "body/hash");
+    oauthParams.put("oauth_consumer_key", "9djdj82h48djs9d2");
+    oauthParams.put("oauth_token", "kkk9d7dh3k39sjv7");
+    oauthParams.put("oauth_signature_method", "HMAC-SHA1");
+    oauthParams.put("oauth_timestamp", "137131201");
+    oauthParams.put("oauth_nonce", "7d8f3e4a");
 
     String paramString = OAuth.toOauthParamString(params, oauthParams);
 
-    assertEquals("first_param=othervalue&first_param=value&oauth_body_hash=body/hash&oauth_nonce=randomnonce&param2=hello&param3=world", paramString);
+    assertEquals("a2=r%20b&a3=2%20q&a3=a&b5=%3D%253D&c%40=&c2=&oauth_consumer_key=9djdj82h48djs9d2&oauth_nonce=7d8f3e4a&oauth_signature_method=HMAC-SHA1&oauth_timestamp=137131201&oauth_token=kkk9d7dh3k39sjv7", paramString);
+  }
+
+  @Test
+  public void oauthParamsStringAscendingByteValueOrdering() {
+    TreeMap<String, List<String>> params = new TreeMap<>();
+    params.put("b", Arrays.asList("b"));
+    params.put("A", Arrays.asList("a", "A"));
+    params.put("B", Arrays.asList("B"));
+    params.put("a", Arrays.asList("A", "a"));
+    params.put("0", Arrays.asList("0"));
+    HashMap<String, String> oauthParams = new HashMap<>();
+
+    String paramString = OAuth.toOauthParamString(params, oauthParams);
+
+    assertEquals("0=0&A=A&A=a&B=B&a=A&a=a&b=b", paramString);
   }
 
   @Test
