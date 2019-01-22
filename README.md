@@ -149,7 +149,7 @@ See also: [CONFIG OPTIONS for java](https://github.com/OpenAPITools/openapi-gene
 
 #### okhttp-gson <a name="okhttp-gson"></a>
 ##### OpenAPI Generator Plugin Configuration
-```
+```xml
 <configuration>
     <inputSpec>${project.basedir}/src/main/resources/openapi-spec.yaml</inputSpec>
     <generatorName>java</generatorName>
@@ -170,7 +170,7 @@ ServiceApi serviceApi = new ServiceApi(client);
 
 #### feign <a name="feign"></a>
 ##### OpenAPI Generator Plugin Configuration
-```
+```xml
 <configuration>
     <inputSpec>${project.basedir}/src/main/resources/openapi-spec.yaml</inputSpec>
     <generatorName>java</generatorName>
@@ -193,7 +193,7 @@ ServiceApi serviceApi = client.buildClient(ServiceApi.class);
 
 #### retrofit <a name="retrofit"></a>
 ##### OpenAPI Generator Plugin Configuration
-```
+```xml
 <configuration>
     <inputSpec>${project.basedir}/src/main/resources/openapi-spec.yaml</inputSpec>
     <generatorName>java</generatorName>
@@ -215,7 +215,7 @@ ServiceApi serviceApi = client.createService(ServiceApi.class);
 
 #### retrofit2 <a name="retrofit2"></a>
 ##### OpenAPI Generator Plugin Configuration
-```
+```xml
 <configuration>
     <inputSpec>${project.basedir}/src/main/resources/openapi-spec.yaml</inputSpec>
     <generatorName>java</generatorName>
@@ -237,7 +237,7 @@ ServiceApi serviceApi = client.createService(ServiceApi.class);
 
 #### google-api-client <a name="google-api-client"></a>
 ##### OpenAPI Generator Plugin Configuration
-```
+```xml
 <configuration>
     <inputSpec>${project.basedir}/src/main/resources/openapi-spec.yaml</inputSpec>
     <generatorName>java</generatorName>
