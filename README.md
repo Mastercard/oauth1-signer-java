@@ -72,7 +72,7 @@ The method that does all the heavy lifting is `OAuth.getAuthorizationHeader`. Yo
 ```java
 String consumerKey = "<insert consumer key>";
 URI uri = URI.create("https://sandbox.api.mastercard.com/service");
-String method = "GET";
+String method = "POST";
 String payload = "Hello world!";
 Charset charset = Charset.forName("UTF-8");
 String authHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey);
