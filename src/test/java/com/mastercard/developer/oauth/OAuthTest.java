@@ -225,6 +225,9 @@ public class OAuthTest {
     String bodyHash = OAuth.getBodyHash(OAuth.EMPTY_STRING, UTF8_CHARSET);
     assertThat(bodyHash).isEqualTo("47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=");
 
+    bodyHash = OAuth.getBodyHash(null, UTF8_CHARSET);
+    assertThat(bodyHash).isEqualTo("47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=");
+
     bodyHash = OAuth.getBodyHash("{\"foõ\":\"bar\"}", UTF8_CHARSET);
     assertThat(bodyHash).isEqualTo("+Z+PWW2TJDnPvRcTgol+nKO3LT7xm8smnsg+//XMIyI=");
   }
