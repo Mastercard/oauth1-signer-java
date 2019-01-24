@@ -38,7 +38,7 @@ As part of this set up, you'll receive credentials for your app:
 ### Adding the Library to Your Project <a name="adding-the-library-to-your-project"></a>
 
 #### Maven
-```
+```xml
 <dependency>
     <groupId>com.mastercard.developer</groupId>
     <artifactId>oauth1-signer</artifactId>
