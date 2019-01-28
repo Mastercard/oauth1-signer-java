@@ -9,7 +9,7 @@
     <version>1.2.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>Zero dependency library for generating a Mastercard API compliant OAuth signature</description>
-    <url>https://developer.mastercard.com</url>
+    <url>https://github.com/Mastercard/oauth1-signer-java</url>
     <name>oauth1-signer</name>
 
     <properties>
@@ -29,8 +29,7 @@
 
     <developers>
         <developer>
-            <email>APISupport@mastercard.com</email>
-            <organization>Mastercard Worldwide</organization>
+            <organization>Mastercard</organization>
             <organizationUrl>https://developer.mastercard.com</organizationUrl>
         </developer>
     </developers>
