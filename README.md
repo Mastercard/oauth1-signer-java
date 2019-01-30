@@ -138,7 +138,7 @@ It provides generators and library templates for supporting multiple languages a
 
 The `com.mastercard.developer.interceptors` package will provide you with some request interceptor classes you can use when configuring your API client. These classes will take care of adding the correct `Authorization` header before sending the request.
 
-Generators currently supported:
+Library options currently supported for the `java` generator:
 + [okhttp-gson](#okhttp-gson)
 + [feign](#feign)
 + [retrofit](#retrofit)
@@ -158,7 +158,7 @@ See also: [CONFIG OPTIONS for java](https://github.com/OpenAPITools/openapi-gene
 </configuration>
 ```
 
-##### Usage of the OkHttp2OAuth1Interceptor
+##### Usage of the `OkHttp2OAuth1Interceptor`
 ```java
 ApiClient client = new ApiClient();
 client.setBasePath("https://sandbox.api.mastercard.com");
@@ -179,7 +179,7 @@ ServiceApi serviceApi = new ServiceApi(client);
 </configuration>
 ```
 
-##### Usage of the OpenFeignOAuth1Interceptor
+##### Usage of the `OpenFeignOAuth1Interceptor`
 ```java
 ApiClient client = new ApiClient();
 client.setBasePath("https://sandbox.api.mastercard.com");
@@ -202,7 +202,7 @@ ServiceApi serviceApi = client.buildClient(ServiceApi.class);
 </configuration>
 ```
 
-##### Usage of the OkHttp2OAuth1Interceptor
+##### Usage of the `OkHttp2OAuth1Interceptor`
 ```java
 ApiClient client = new ApiClient();
 RestAdapter.Builder adapterBuilder = client.getAdapterBuilder();
@@ -224,7 +224,7 @@ ServiceApi serviceApi = client.createService(ServiceApi.class);
 </configuration>
 ```
 
-##### Usage of the OkHttpOAuth1Interceptor
+##### Usage of the `OkHttpOAuth1Interceptor`
 ```java
 ApiClient client = new ApiClient();
 Retrofit.Builder adapterBuilder = client.getAdapterBuilder();
@@ -246,7 +246,7 @@ ServiceApi serviceApi = client.createService(ServiceApi.class);
 </configuration>
 ```
 
-##### Usage of the OAuth1HttpExecuteInterceptor
+##### Usage of the `OAuth1HttpExecuteInterceptor`
 ```java
 HttpRequestInitializer initializer = new HttpRequestInitializer() {
     @Override
