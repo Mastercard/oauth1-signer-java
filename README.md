@@ -145,7 +145,9 @@ Library options currently supported for the `java` generator:
 + [retrofit2](#retrofit2)
 + [google-api-client](#google-api-client)
 
-See also: [CONFIG OPTIONS for java](https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/java.md).
+See also:
+* [OpenAPI Generator (maven Plugin)](https://mvnrepository.com/artifact/org.openapitools/openapi-generator-maven-plugin) 
+* [CONFIG OPTIONS for java](https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/java.md)
 
 #### okhttp-gson <a name="okhttp-gson"></a>
 ##### OpenAPI Generator Plugin Configuration
