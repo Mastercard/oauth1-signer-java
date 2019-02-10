@@ -1,18 +1,23 @@
 language: java
-jdk:  
-  - oraclejdk8
-  - oraclejdk9
-  - openjdk8
-  - openjdk9
-  - openjdk10
-  - openjdk11
-  - openjdk12
+matrix:
+  fast_finish: true
+  include:
+  - jdk: oraclejdk8
+    env: WITH_SONAR_ANALYSIS=true
+  - jdk: oraclejdk9
+  - jdk: openjdk8
+  - jdk: openjdk9
+  - jdk: openjdk10
+  - jdk: openjdk11
+  - jdk: openjdk12
 install: true
 script:
   - mvn clean install "-Dgpg.signature.skip=$GPG_SIGNATURE_SKIP"
-  - |
-    mvn sonar:sonar \
-      "-Dsonar.projectKey=$SONAR_PROJECT_KEY" \
-      "-Dsonar.organization=$SONAR_ORGANIZATION_KEY" \
-      "-Dsonar.host.url=$SONAR_URL" \
-      "-Dsonar.login=$SONAR_TOKEN"
+after_success:
+  - if: env(RUN_SONAR_ANALYSIS) IS present
+      |
+      mvn sonar:sonar \
+        "-Dsonar.projectKey=$SONAR_PROJECT_KEY" \
+        "-Dsonar.organization=$SONAR_ORGANIZATION_KEY" \
+        "-Dsonar.host.url=$SONAR_URL" \
+        "-Dsonar.login=$SONAR_TOKEN"
