@@ -10,3 +10,9 @@ jdk:
 install: true
 script:
   - mvn clean install "-Dgpg.signature.skip=$GPG_SIGNATURE_SKIP"
+  - |
+    mvn sonar:sonar \
+      "-Dsonar.projectKey=$SONAR_PROJECT_KEY" \
+      "-Dsonar.organization=$SONAR_ORGANIZATION_KEY" \
+      "-Dsonar.host.url=$SONAR_URL" \
+      "-Dsonar.login=$SONAR_TOKEN"
