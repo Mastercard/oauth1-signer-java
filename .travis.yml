@@ -1,4 +1,6 @@
 language: java
+git:
+  depth: false  # "Shallow clone detected during the analysis"
 matrix:
   fast_finish: true
   include:
@@ -16,6 +18,7 @@ script:
 after_success:
   - |
     test $WITH_SONAR_ANALYSIS && mvn sonar:sonar \
+        "-Dsonar.projectName=$SONAR_PROJECT_NAME" \
         "-Dsonar.projectKey=$SONAR_PROJECT_KEY" \
         "-Dsonar.organization=$SONAR_ORGANIZATION_KEY" \
         "-Dsonar.host.url=$SONAR_URL" \
