@@ -15,7 +15,7 @@ script:
   - mvn clean install "-Dgpg.signature.skip=$GPG_SIGNATURE_SKIP"
 after_success:
   - |
-    test $WITH_SONAR_ANALYSIS=true && mvn sonar:sonar \
+    test $WITH_SONAR_ANALYSIS && mvn sonar:sonar \
         "-Dsonar.projectKey=$SONAR_PROJECT_KEY" \
         "-Dsonar.organization=$SONAR_ORGANIZATION_KEY" \
         "-Dsonar.host.url=$SONAR_URL" \
