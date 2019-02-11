@@ -7,6 +7,7 @@ import okio.Buffer;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 
 
@@ -16,7 +17,7 @@ import java.security.PrivateKey;
 public class OkHttp2Signer extends AbstractSigner {
 
     public OkHttp2Signer(String consumerKey, PrivateKey signingKey) {
-        super(Charset.forName("UTF-8"), consumerKey, signingKey);
+        super(StandardCharsets.UTF_8, consumerKey, signingKey);
     }
 
     public OkHttp2Signer(Charset charset, String consumerKey, PrivateKey signingKey) {

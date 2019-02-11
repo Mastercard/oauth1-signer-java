@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -91,7 +92,7 @@ public class OAuth {
         // OAuth parameter string
         Util.percentEncode(paramString, charset);
 
-    LOG.fine("Generated SBS: " + sbs);
+    LOG.log(Level.FINE, "Generated SBS: {0}", sbs);
     return sbs;
   }
 
@@ -226,6 +227,31 @@ public class OAuth {
   }
 
   /**
+   * Generates a hash based on request payload as per
+   * https://tools.ietf.org/id/draft-eaton-oauth-bodyhash-00.html
+   *
+   * @param payload Request payload
+   * @param charset Charset encoding of the request
+   * @return Base64 encoded cryptographic hash of the given payload
+   */
+  static String getBodyHash(String payload, Charset charset) {
+    MessageDigest digest;
+
+    try {
+      digest = MessageDigest.getInstance("SHA-" + SHA_BITS);
+    } catch (NoSuchAlgorithmException e) {
+      throw new IllegalStateException("Unable to obtain " + SHA_BITS + " message digest.", e);
+    }
+
+    digest.reset();
+    // "If the request does not have an entity body, the hash should be taken over the empty string"
+    byte[] byteArray = null == payload ? "".getBytes() : payload.getBytes(charset); //
+    byte[] hash = digest.digest(byteArray);
+
+    return Util.b64Encode(hash);
+  }
+
+  /**
    * Signs the signature base string using an RSA private key. The methodology is described at
    * https://tools.ietf.org/html/rfc5849#section-3.4.3 but Mastercard uses the stronger SHA-256 algorithm
    * as a replacement for the described SHA1 which is no longer considered secure.
@@ -240,55 +266,30 @@ public class OAuth {
     try {
       signer = Signature.getInstance("SHA256withRSA");
     } catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException("Unable to obtain RSA-SHA256 signature algorithm", e);
+      throw new IllegalStateException("Unable to obtain RSA-SHA256 signature algorithm", e);
     }
 
     try {
       signer.initSign(signingKey);
     } catch (InvalidKeyException e) {
-      throw new IllegalArgumentException("The provided private key could not be initialized", e);
+      throw new IllegalStateException("The provided private key could not be initialized", e);
     }
 
     byte[] text = sbs.getBytes(charset);
     try {
       signer.update(text);
     } catch (SignatureException e) {
-      throw new RuntimeException("Unable to initialize bytes for signing", e);
+      throw new IllegalStateException("Unable to initialize bytes for signing", e);
     }
 
     byte[] signatureBytes;
     try {
       signatureBytes = signer.sign();
     } catch (SignatureException e) {
-      throw new RuntimeException("Unable to sign the signature base string", e);
+      throw new IllegalStateException("Unable to sign the signature base string", e);
     }
 
     return Util.b64Encode(signatureBytes);
-  }
-
-  /**
-   * Generates a hash based on request payload as per
-   * https://tools.ietf.org/id/draft-eaton-oauth-bodyhash-00.html
-   *
-   * @param payload Request payload
-   * @param charset Charset encoding of the request
-   * @return Base64 encoded cryptographic hash of the given payload
-   */
-  static String getBodyHash(String payload, Charset charset) {
-    MessageDigest digest;
-
-    try {
-      digest = MessageDigest.getInstance("SHA-" + SHA_BITS);
-    } catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException("Unable to obtain " + SHA_BITS + " message digest.", e);
-    }
-
-    digest.reset();
-    // "If the request does not have an entity body, the hash should be taken over the empty string"
-    byte[] byteArray = null == payload ? "".getBytes() : payload.getBytes(charset); // 
-    byte[] hash = digest.digest(byteArray);
-
-    return Util.b64Encode(hash);
   }
 
   /**

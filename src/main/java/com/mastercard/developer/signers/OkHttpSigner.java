@@ -4,6 +4,7 @@ import com.mastercard.developer.oauth.OAuth;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 
 import okhttp3.Request;
@@ -16,7 +17,7 @@ import okio.Buffer;
 public class OkHttpSigner extends AbstractSigner {
 
   public OkHttpSigner(String consumerKey, PrivateKey signingKey) {
-    super(Charset.forName("UTF-8"), consumerKey, signingKey);
+    super(StandardCharsets.UTF_8, consumerKey, signingKey);
   }
 
   public OkHttpSigner(Charset charset, String consumerKey, PrivateKey signingKey) {

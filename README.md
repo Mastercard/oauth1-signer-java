@@ -5,7 +5,6 @@
 [![](https://img.shields.io/maven-central/v/com.mastercard.developer/oauth1-signer.svg)](https://search.maven.org/artifact/com.mastercard.developer/oauth1-signer/)
 [![](https://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/Mastercard/oauth1-signer-java/blob/master/LICENSE)
 
-
 ## Table of Contents
 - [Overview](#overview)
   * [Compatibility](#compatibility)
@@ -75,7 +74,7 @@ String consumerKey = "<insert consumer key>";
 URI uri = URI.create("https://sandbox.api.mastercard.com/service");
 String method = "POST";
 String payload = "Hello world!";
-Charset charset = Charset.forName("UTF-8");
+Charset charset = StandardCharsets.UTF_8;
 String authHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey);
 ```
 
@@ -93,7 +92,7 @@ Usage briefly described below, but you can also refer to the test package for ex
 
 #### Java HttpsURLConnection <a name="java-httpsurlconnection"></a>
 ```java
-Charset charset = Charset.forName("UTF-8");
+Charset charset = StandardCharsets.UTF_8;
 URL url = new URL("https://sandbox.api.mastercard.com/service");
 String payload = "{\"foo\":\"bar\"}";
 

@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -169,7 +170,7 @@ public class OAuthTest {
   @Test
   public void testSignSignatureBaseString() throws Exception {
     String expectedSignatureString = "IJeNKYGfUhFtj5OAPRI92uwfjJJLCej3RCMLbp7R6OIYJhtwxnTkloHQ2bgV7fks4GT/A7rkqrgUGk0ewbwIC6nS3piJHyKVc7rvQXZuCQeeeQpFzLRiH3rsb+ZS+AULK+jzDje4Fb+BQR6XmxuuJmY6YrAKkj13Ln4K6bZJlSxOizbNvt+Htnx+hNd4VgaVBeJKcLhHfZbWQxK76nMnjY7nDcM/2R6LUIR2oLG1L9m55WP3bakAvmOr392ulv1+mWCwDAZZzQ4lakDD2BTu0ZaVsvBW+mcKFxYeTq7SyTQMM4lEwFPJ6RLc8jJJ+veJXHekLVzWg4qHRtzNBLz1mA==";
-    assertEquals(expectedSignatureString, OAuth.signSignatureBaseString("baseString", TestUtils.getTestPrivateKey(), Charset.forName("UTF-8")));
+    assertEquals(expectedSignatureString, OAuth.signSignatureBaseString("baseString", TestUtils.getTestPrivateKey(), StandardCharsets.UTF_8));
   }
 
   @Test
