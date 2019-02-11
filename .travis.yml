@@ -22,4 +22,4 @@ after_success:
         "-Dsonar.projectKey=$SONAR_PROJECT_KEY" \
         "-Dsonar.organization=$SONAR_ORGANIZATION_KEY" \
         "-Dsonar.host.url=$SONAR_URL" \
-        "-Dsonar.login=$SONAR_TOKEN"
+        "-Dsonar.login=$SONAR_TOKEN" || echo 'Skipping Sonar execution'
