@@ -28,7 +28,7 @@ public class OAuth {
   public static final String AUTHORIZATION_HEADER_NAME = "Authorization";
 
   private static final Logger LOG = Logger.getLogger(OAuth.class.getName());
-  private static final String SHA_BITS = "256";
+  private static final String HASH_ALGORITHM = "SHA-256";
 
   /**
    * Creates a Mastercard API compliant OAuth Authorization header
@@ -47,10 +47,10 @@ public class OAuth {
     HashMap<String, String> oauthParams = new HashMap<>();
     oauthParams.put("oauth_consumer_key", consumerKey);
     oauthParams.put("oauth_nonce", getNonce());
-    oauthParams.put("oauth_signature_method", "RSA-SHA" + SHA_BITS);
+    oauthParams.put("oauth_signature_method", "RSA-" + HASH_ALGORITHM.replace("-", ""));
     oauthParams.put("oauth_timestamp", getTimestamp());
     oauthParams.put("oauth_version", "1.0");
-    oauthParams.put("oauth_body_hash", getBodyHash(payload, charset));
+    oauthParams.put("oauth_body_hash", getBodyHash(payload, charset, HASH_ALGORITHM));
 
     // Combine query and oauth_ parameters into lexicographically sorted string
     String paramString = toOauthParamString(queryParams, oauthParams);
@@ -229,13 +229,13 @@ public class OAuth {
    * @param charset Charset encoding of the request
    * @return Base64 encoded cryptographic hash of the given payload
    */
-  static String getBodyHash(String payload, Charset charset) {
+  static String getBodyHash(String payload, Charset charset, String hashAlg) {
     MessageDigest digest;
 
     try {
-      digest = MessageDigest.getInstance("SHA-" + SHA_BITS);
+      digest = MessageDigest.getInstance(hashAlg);
     } catch (NoSuchAlgorithmException e) {
-      throw new IllegalStateException("Unable to obtain " + SHA_BITS + " message digest", e);
+      throw new IllegalStateException("Unable to obtain " + hashAlg + " message digest", e);
     }
 
     digest.reset();
@@ -257,9 +257,8 @@ public class OAuth {
    * @return RSA signature matching the contents of signature base string
    */
   static String signSignatureBaseString(String sbs, PrivateKey signingKey, Charset charset) {
-    Signature signer;
     try {
-      signer = Signature.getInstance("SHA256withRSA");
+      Signature signer = Signature.getInstance("SHA256withRSA");
       signer.initSign(signingKey);
       byte[] sbsBytes = sbs.getBytes(charset);
       signer.update(sbsBytes);

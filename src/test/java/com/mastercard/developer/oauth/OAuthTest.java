@@ -25,6 +25,8 @@ import org.junit.Test;
 
 public class OAuthTest {
 
+  private static final String HASH_ALGORITHM = "SHA-256";
+
   @BeforeClass
   public static void beforeClass() {
     System.setProperty("java.util.logging.config.file", ClassLoader.getSystemResource("logging.properties").getPath());
@@ -158,13 +160,18 @@ public class OAuthTest {
     oauthParams.put("oauth_signature_method", "RSA-SHA256");
     oauthParams.put("oauth_timestamp", "1111111111");
     oauthParams.put("oauth_version", "1.0");
-    oauthParams.put("oauth_body_hash", OAuth.getBodyHash(body, charset));
+    oauthParams.put("oauth_body_hash", OAuth.getBodyHash(body, charset, HASH_ALGORITHM));
 
     String paramString = OAuth.toOauthParamString(OAuth.extractQueryParams(url, charset), oauthParams);
     String baseString = OAuth.getSignatureBaseString(method, OAuth.getBaseUriString(url), paramString, charset);
 
     String expected = "POST&https%3A%2F%2Fsandbox.api.mastercard.com%2Ffraud%2Fmerchant%2Fv1%2Ftermination-inquiry&Format%3DXML%26PageLength%3D10%26PageOffset%3D0%26oauth_body_hash%3Dh2Pd7zlzEZjZVIKB4j94UZn%2FxxoR3RoCjYQ9%2FJdadGQ%3D%26oauth_consumer_key%3Dxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx%26oauth_nonce%3D1111111111111111111%26oauth_signature_method%3DRSA-SHA256%26oauth_timestamp%3D1111111111%26oauth_version%3D1.0";
     assertEquals(expected, baseString);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testSignSignatureBaseString_invalidKey() {
+    OAuth.signSignatureBaseString("some string", null, StandardCharsets.UTF_8);
   }
 
   @Test
@@ -223,14 +230,19 @@ public class OAuthTest {
 
   @Test
   public void bodyHash() {
-    String bodyHash = OAuth.getBodyHash(OAuth.EMPTY_STRING, UTF8_CHARSET);
+    String bodyHash = OAuth.getBodyHash(OAuth.EMPTY_STRING, UTF8_CHARSET, HASH_ALGORITHM);
     assertThat(bodyHash).isEqualTo("47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=");
 
-    bodyHash = OAuth.getBodyHash(null, UTF8_CHARSET);
+    bodyHash = OAuth.getBodyHash(null, UTF8_CHARSET, HASH_ALGORITHM);
     assertThat(bodyHash).isEqualTo("47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=");
 
-    bodyHash = OAuth.getBodyHash("{\"foõ\":\"bar\"}", UTF8_CHARSET);
+    bodyHash = OAuth.getBodyHash("{\"foõ\":\"bar\"}", UTF8_CHARSET, HASH_ALGORITHM);
     assertThat(bodyHash).isEqualTo("+Z+PWW2TJDnPvRcTgol+nKO3LT7xm8smnsg+//XMIyI=");
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void bodyHash_invalidHashAlgorithm() {
+    OAuth.getBodyHash(OAuth.EMPTY_STRING, UTF8_CHARSET, "SHA-123");
   }
 
   @Test
