@@ -13,7 +13,7 @@ import static com.mastercard.developer.test.TestUtils.getTestPrivateKey;
 public class OkHttp2SignerTest {
 
     @Test
-    public void testSign_ShouldAddOAuth1HeaderToRequest_WhenValidInputs() throws Exception {
+    public void testSign_ShouldAddOAuth1HeaderToPostRequest() throws Exception {
 
         // GIVEN
         PrivateKey signingKey = getTestPrivateKey();

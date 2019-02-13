@@ -24,7 +24,6 @@ public class HttpsUrlConnectionSigner extends AbstractSigner {
       throw new IllegalArgumentException("The provided URL could not be converted to an URI representation", e);
     }
     String method = req.getRequestMethod();
-
     String authHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey);
     req.setRequestProperty(OAuth.AUTHORIZATION_HEADER_NAME, authHeader);
   }

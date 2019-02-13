@@ -15,7 +15,7 @@ import static okhttp3.Request.Builder;
 public class OkHttpSignerTest {
 
     @Test
-    public void testSign_ShouldAddOAuth1HeaderToRequest_WhenValidInputs() throws Exception {
+    public void testSign_ShouldAddOAuth1HeaderToPostRequest() throws Exception {
 
         // GIVEN
         PrivateKey signingKey = getTestPrivateKey();

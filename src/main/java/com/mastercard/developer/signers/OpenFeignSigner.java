@@ -4,7 +4,6 @@ import com.mastercard.developer.oauth.OAuth;
 import feign.RequestTemplate;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.security.PrivateKey;
 
@@ -23,12 +22,7 @@ public class OpenFeignSigner extends AbstractSigner {
     }
 
     public void sign(RequestTemplate requestTemplate) {
-        URI uri;
-        try {
-            uri = new URI(baseUri.replaceAll("/$", "") + requestTemplate.request().url());
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("The provided URL could not be converted to an URI representation", e);
-        }
+        URI uri = URI.create(baseUri.replaceAll("/$", "") + requestTemplate.request().url());
         String method = requestTemplate.method();
         byte[] bodyBytes = requestTemplate.body();
         String payload = bodyBytes != null ? new String(bodyBytes, charset) : null;

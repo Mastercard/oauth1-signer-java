@@ -13,7 +13,7 @@ import static com.mastercard.developer.test.TestUtils.UTF8_CHARSET;
 public class GoogleApiClientSignerTest {
 
     @Test
-    public void testSign_ShouldAddOAuth1HeaderToRequest_WhenValidInputs() throws Exception {
+    public void testSign_ShouldAddOAuth1HeaderToPostRequest() throws Exception {
 
         // GIVEN
         PrivateKey signingKey = TestUtils.getTestPrivateKey();

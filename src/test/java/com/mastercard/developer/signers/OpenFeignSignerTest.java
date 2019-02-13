@@ -4,6 +4,7 @@ import feign.RequestTemplate;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.util.Collection;
 
@@ -12,7 +13,7 @@ import static com.mastercard.developer.test.TestUtils.getTestPrivateKey;
 public class OpenFeignSignerTest {
 
     @Test
-    public void testSign_ShouldAddOAuth1HeaderToRequest_WhenValidInputs() throws Exception {
+    public void testSign_ShouldAddOAuth1HeaderToPostRequest() throws Exception {
 
         // GIVEN
         PrivateKey signingKey = getTestPrivateKey();
@@ -23,7 +24,10 @@ public class OpenFeignSignerTest {
         requestTemplate.body("{\"foo\":\"bår\"}");
 
         // WHEN
-        OpenFeignSigner instanceUnderTest = new OpenFeignSigner(consumerKey, signingKey, "https://api.mastercard.com/");
+        OpenFeignSigner instanceUnderTest = new OpenFeignSigner(StandardCharsets.UTF_8,
+                consumerKey,
+                signingKey,
+                "https://api.mastercard.com/");
         instanceUnderTest.sign(requestTemplate);
 
         // THEN
@@ -33,13 +37,13 @@ public class OpenFeignSignerTest {
     }
 
     @Test
-    public void testSign_ShouldNotThrowNullPointerException_WhenEmptyBody() throws Exception {
+    public void testSign_ShouldAddOAuth1HeaderToGetRequest() throws Exception {
 
         // GIVEN
         PrivateKey signingKey = getTestPrivateKey();
         String consumerKey = "Some key";
         RequestTemplate requestTemplate = new RequestTemplate();
-        requestTemplate.method("POST");
+        requestTemplate.method("GET");
         requestTemplate.append("/service");
 
         // WHEN

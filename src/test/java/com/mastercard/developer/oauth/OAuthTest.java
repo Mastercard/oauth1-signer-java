@@ -31,8 +31,8 @@ public class OAuthTest {
   }
 
   @Test
-  public void queryParser() throws Exception {
-    URI uri = new URI("https://sandbox.api.mastercard.com/audiences/v1/getcountries?offset=0&offset=1&length=10&empty&odd=");
+  public void queryParser() {
+    URI uri = URI.create("https://sandbox.api.mastercard.com/audiences/v1/getcountries?offset=0&offset=1&length=10&empty&odd=");
     Map<String, List<String>> queryParams = OAuth.extractQueryParams(uri, UTF8_CHARSET);
 
     assertEquals(queryParams.toString(), 4, queryParams.size());
@@ -43,8 +43,8 @@ public class OAuthTest {
   }
 
   @Test
-  public void queryParserEncoding() throws Exception {
-    URI uri = new URI("https://sandbox.api.mastercard.com?param1=plus+value&param2=colon:value");
+  public void queryParserEncoding() {
+    URI uri = URI.create("https://sandbox.api.mastercard.com?param1=plus+value&param2=colon:value");
     Map<String, List<String>> queryParams = OAuth.extractQueryParams(uri, UTF8_CHARSET);
 
     assertEquals(queryParams.toString(), 2, queryParams.size());
@@ -174,49 +174,49 @@ public class OAuthTest {
   }
 
   @Test
-  public void urlNormalizationRfcExamples() throws Exception {
-    URI uri = new URI("https://www.example.net:8080");
+  public void urlNormalizationRfcExamples() {
+    URI uri = URI.create("https://www.example.net:8080");
     String baseUri = OAuth.getBaseUriString(uri);
     assertEquals("https://www.example.net:8080/", baseUri);
 
-    uri = new URI("http://EXAMPLE.COM:80/r%20v/X?id=123");
+    uri = URI.create("http://EXAMPLE.COM:80/r%20v/X?id=123");
     baseUri = OAuth.getBaseUriString(uri);
     // /!\ According to https://tools.ietf.org/html/rfc5849#section-3.4.1.2 it seems we should get "r%20v", not "r%2520v"
     assertEquals("http://example.com/r%2520v/X", baseUri);
   }
 
   @Test
-  public void urlNormalizationRedundantPorts() throws Exception {
-    URI uri = new URI("https://api.mastercard.com:443/test?query=param");
+  public void urlNormalizationRedundantPorts() {
+    URI uri = URI.create("https://api.mastercard.com:443/test?query=param");
     String baseUri = OAuth.getBaseUriString(uri);
     assertEquals("https://api.mastercard.com/test", baseUri);
 
-    uri = new URI("http://api.mastercard.com:80/test");
+    uri = URI.create("http://api.mastercard.com:80/test");
     baseUri = OAuth.getBaseUriString(uri);
     assertEquals("http://api.mastercard.com/test", baseUri);
 
-    uri = new URI("https://api.mastercard.com:17443/test?query=param");
+    uri = URI.create("https://api.mastercard.com:17443/test?query=param");
     baseUri = OAuth.getBaseUriString(uri);
     assertEquals("https://api.mastercard.com:17443/test", baseUri);
   }
 
   @Test
-  public void urlNormalizationRemoveFragment() throws Exception {
-    URI uri = new URI("https://api.mastercard.com/test?query=param#fragment");
+  public void urlNormalizationRemoveFragment() {
+    URI uri = URI.create("https://api.mastercard.com/test?query=param#fragment");
     String baseUri = OAuth.getBaseUriString(uri);
     assertEquals("https://api.mastercard.com/test", baseUri);
   }
 
   @Test
-  public void urlNormalizationAddTrailingSlash() throws Exception {
-    URI uri = new URI("https://api.mastercard.com");
+  public void urlNormalizationAddTrailingSlash() {
+    URI uri = URI.create("https://api.mastercard.com");
     String baseUri = OAuth.getBaseUriString(uri);
     assertEquals("https://api.mastercard.com/", baseUri);
   }
 
   @Test
-  public void urlNormalizationLowercaseSchemeAndHost() throws Exception {
-    URI uri = new URI("HTTPS://API.MASTERCARD.COM/TEST");
+  public void urlNormalizationLowercaseSchemeAndHost() {
+    URI uri = URI.create("HTTPS://API.MASTERCARD.COM/TEST");
     String baseUri = OAuth.getBaseUriString(uri);
     assertEquals("https://api.mastercard.com/TEST", baseUri);
   }

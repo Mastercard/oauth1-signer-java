@@ -3,12 +3,7 @@ package com.mastercard.developer.oauth;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.Signature;
-import java.security.SignatureException;
+import java.security.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -240,7 +235,7 @@ public class OAuth {
     try {
       digest = MessageDigest.getInstance("SHA-" + SHA_BITS);
     } catch (NoSuchAlgorithmException e) {
-      throw new IllegalStateException("Unable to obtain " + SHA_BITS + " message digest.", e);
+      throw new IllegalStateException("Unable to obtain " + SHA_BITS + " message digest", e);
     }
 
     digest.reset();
@@ -265,31 +260,14 @@ public class OAuth {
     Signature signer;
     try {
       signer = Signature.getInstance("SHA256withRSA");
-    } catch (NoSuchAlgorithmException e) {
-      throw new IllegalStateException("Unable to obtain RSA-SHA256 signature algorithm", e);
-    }
-
-    try {
       signer.initSign(signingKey);
-    } catch (InvalidKeyException e) {
-      throw new IllegalStateException("The provided private key could not be initialized", e);
+      byte[] sbsBytes = sbs.getBytes(charset);
+      signer.update(sbsBytes);
+      byte[] signatureBytes = signer.sign();
+      return Util.b64Encode(signatureBytes);
+    } catch (GeneralSecurityException e) {
+      throw new IllegalStateException("Unable to RSA-SHA256 sign the given string with the provided key", e);
     }
-
-    byte[] text = sbs.getBytes(charset);
-    try {
-      signer.update(text);
-    } catch (SignatureException e) {
-      throw new IllegalStateException("Unable to initialize bytes for signing", e);
-    }
-
-    byte[] signatureBytes;
-    try {
-      signatureBytes = signer.sign();
-    } catch (SignatureException e) {
-      throw new IllegalStateException("Unable to sign the signature base string", e);
-    }
-
-    return Util.b64Encode(signatureBytes);
   }
 
   /**
