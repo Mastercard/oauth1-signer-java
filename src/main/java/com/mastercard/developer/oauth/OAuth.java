@@ -171,7 +171,7 @@ public class OAuth {
    * Generates a random string for replay protection as per
    * https://tools.ietf.org/html/rfc5849#section-3.3
    *
-   * @return UUID with dashes removed
+   * @return concatenation of 3 characters from the most significant bits and 13 characters from the least significant bits without dashes.
    */
   static String getNonce() {
     UUID uuid = UUID.randomUUID();
