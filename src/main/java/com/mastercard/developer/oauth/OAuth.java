@@ -174,7 +174,10 @@ public class OAuth {
    * @return UUID with dashes removed
    */
   static String getNonce() {
-    return UUID.randomUUID().toString().replace("-", "");
+    UUID uuid = UUID.randomUUID();
+    String least = Long.toString(uuid.getLeastSignificantBits(), Character.MAX_RADIX).replace("-", "");
+    String most = Long.toString(uuid.getMostSignificantBits(), Character.MAX_RADIX).replace("-", "").substring(0, 3);
+    return most + least;
   }
 
   /**
