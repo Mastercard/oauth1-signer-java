@@ -68,7 +68,7 @@ public class OAuthTest {
   @Test
   public void nonceUniqueness() {
     String nonce = OAuth.getNonce();
-    assertEquals(32, nonce.length());
+    assertEquals(16, nonce.length());
 
     final ConcurrentLinkedQueue nonces = new ConcurrentLinkedQueue();
     ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
