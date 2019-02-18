@@ -16,7 +16,7 @@ public class GoogleApiClientSignerTest {
     public void testSign_ShouldAddOAuth1HeaderToPostRequest() throws Exception {
 
         // GIVEN
-        PrivateKey signingKey = TestUtils.getTestPrivateKey();
+        PrivateKey signingKey = TestUtils.getTestSigningKey();
         String consumerKey = "Some key";
         HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
         HttpContent httpContent = new ByteArrayContent("application/json; charset=" + UTF8_CHARSET.name(), "{\"foo\":\"bår\"}".getBytes());

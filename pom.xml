@@ -197,6 +197,7 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
+                            <nodeprecated>true</nodeprecated>
                             <additionalOptions>-Xdoclint:none</additionalOptions>
                         </configuration>
                     </execution>

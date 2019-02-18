@@ -8,7 +8,7 @@ import org.junit.Test;
 import java.security.PrivateKey;
 
 import static com.mastercard.developer.test.TestUtils.UTF8_CHARSET;
-import static com.mastercard.developer.test.TestUtils.getTestPrivateKey;
+import static com.mastercard.developer.test.TestUtils.getTestSigningKey;
 
 public class OkHttp2SignerTest {
 
@@ -16,7 +16,7 @@ public class OkHttp2SignerTest {
     public void testSign_ShouldAddOAuth1HeaderToPostRequest() throws Exception {
 
         // GIVEN
-        PrivateKey signingKey = getTestPrivateKey();
+        PrivateKey signingKey = getTestSigningKey();
         String consumerKey = "Some key";
         MediaType jsonMediaType = MediaType.parse("application/json; charset=" + UTF8_CHARSET.name());
         RequestBody body = RequestBody.create(jsonMediaType, "{\"foo\":\"bår\"}");

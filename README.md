@@ -58,9 +58,9 @@ See: https://search.maven.org/artifact/com.mastercard.developer/oauth1-signer
 
 ### Loading the Signing Key <a name="loading-the-signing-key"></a>
 
-A `PrivateKey` key object can be created by calling the `SecurityUtils.loadPrivateKey` method:
+A `PrivateKey` key object can be created by calling the `AuthenticationUtils.loadSigningKey` method:
 ```java
-PrivateKey signingKey = SecurityUtils.loadPrivateKey(
+PrivateKey signingKey = AuthenticationUtils.loadSigningKey(
 						"<insert PKCS#12 key file path>", 
 						"<insert key alias>", 
 						"<insert key password>");

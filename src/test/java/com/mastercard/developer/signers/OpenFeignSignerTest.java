@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.util.Collection;
 
-import static com.mastercard.developer.test.TestUtils.getTestPrivateKey;
+import static com.mastercard.developer.test.TestUtils.getTestSigningKey;
 
 public class OpenFeignSignerTest {
 
@@ -16,7 +16,7 @@ public class OpenFeignSignerTest {
     public void testSign_ShouldAddOAuth1HeaderToPostRequest() throws Exception {
 
         // GIVEN
-        PrivateKey signingKey = getTestPrivateKey();
+        PrivateKey signingKey = getTestSigningKey();
         String consumerKey = "Some key";
         RequestTemplate requestTemplate = new RequestTemplate();
         requestTemplate.method("POST");
@@ -40,7 +40,7 @@ public class OpenFeignSignerTest {
     public void testSign_ShouldAddOAuth1HeaderToGetRequest() throws Exception {
 
         // GIVEN
-        PrivateKey signingKey = getTestPrivateKey();
+        PrivateKey signingKey = getTestSigningKey();
         String consumerKey = "Some key";
         RequestTemplate requestTemplate = new RequestTemplate();
         requestTemplate.method("GET");

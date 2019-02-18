@@ -1,26 +1,22 @@
 package com.mastercard.developer.utils;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.*;
 import java.security.cert.CertificateException;
 
 /**
- * Utility class.
+ * Utility class. Deprecated, use {@link com.mastercard.developer.utils.AuthenticationUtils} instead.
  */
+@Deprecated
 public final class SecurityUtils {
 
     private SecurityUtils() {
     }
 
-    /**
-     * Load a RSA key out of a PKCS#12 container.
-     */
+    @Deprecated
     public static PrivateKey loadPrivateKey(String pkcs12KeyFilePath,
-                                            String signingKeyAlias,
-                                            String signingKeyPassword) throws IOException, NoSuchProviderException, KeyStoreException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
-        KeyStore pkcs12KeyStore = KeyStore.getInstance("PKCS12", "SunJSSE");
-        pkcs12KeyStore.load(new FileInputStream(pkcs12KeyFilePath), signingKeyPassword.toCharArray());
-        return (PrivateKey) pkcs12KeyStore.getKey(signingKeyAlias, signingKeyPassword.toCharArray());
+                                            String keyAlias,
+                                            String keyPassword) throws IOException, NoSuchProviderException, KeyStoreException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
+        return AuthenticationUtils.loadSigningKey(pkcs12KeyFilePath, keyAlias, keyPassword);
     }
 }

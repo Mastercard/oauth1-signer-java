@@ -16,7 +16,7 @@ public class ApacheHttpClient4SignerTest {
     public void testSign_ShouldAddOAuth1HeaderToPostRequest() throws Exception {
 
         // GIVEN
-        PrivateKey signingKey = TestUtils.getTestPrivateKey();
+        PrivateKey signingKey = TestUtils.getTestSigningKey();
         String consumerKey = "Some key";
         HttpPost httpPost = new HttpPost("https://api.mastercard.com/service");
         httpPost.setEntity(new StringEntity( "{\"foo\":\"bår\"}", ContentType.APPLICATION_JSON)); // ContentType.APPLICATION_JSON implies UTF-8 encoding

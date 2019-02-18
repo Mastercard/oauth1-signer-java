@@ -16,7 +16,7 @@ public class HttpsUrlConnectionSignerTest {
     public void testSign_ShouldAddOAuth1HeaderToPostRequest() throws Exception {
 
         // GIVEN
-        PrivateKey signingKey = TestUtils.getTestPrivateKey();
+        PrivateKey signingKey = TestUtils.getTestSigningKey();
         String consumerKey = "Some key";
 
         HttpsURLConnection connection = (HttpsURLConnection) new URL("https://api.mastercard.com/service").openConnection();
