@@ -14,7 +14,7 @@ public final class AuthenticationUtils {
     }
 
     /**
-     * Load a RSA key out of a PKCS#12 container.
+     * Load a RSA signing key out of a PKCS#12 container.
      */
     public static PrivateKey loadSigningKey(String pkcs12KeyFilePath,
                                             String signingKeyAlias,
