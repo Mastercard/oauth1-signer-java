@@ -5,7 +5,8 @@ import java.security.*;
 import java.security.cert.CertificateException;
 
 /**
- * Utility class. Deprecated, use {@link com.mastercard.developer.utils.AuthenticationUtils} instead.
+ * Utility class.
+ * @deprecated Use {@link com.mastercard.developer.utils.AuthenticationUtils} instead.
  */
 @Deprecated
 public final class SecurityUtils {
