@@ -5,7 +5,8 @@ matrix:
   fast_finish: true
   include:
   - jdk: oraclejdk8
-    env: WITH_SONAR_ANALYSIS=true
+    # Do not run analysis on PR (secure env variables like SONAR_TOKEN are not always available)
+    env: WITH_SONAR_ANALYSIS=$([ "$TRAVIS_PULL_REQUEST" = "false" ] && echo true || echo false)
   - jdk: oraclejdk9
   - jdk: openjdk8
   - jdk: openjdk9
@@ -17,7 +18,7 @@ script:
   - mvn clean install "-Dgpg.signature.skip=$GPG_SIGNATURE_SKIP"
 after_success:
   - |
-    test $WITH_SONAR_ANALYSIS && mvn sonar:sonar \
+    test "$WITH_SONAR_ANALYSIS"="true" && mvn sonar:sonar \
         "-Dsonar.projectName=$SONAR_PROJECT_NAME" \
         "-Dsonar.projectKey=$SONAR_PROJECT_KEY" \
         "-Dsonar.organization=$SONAR_ORGANIZATION_KEY" \
