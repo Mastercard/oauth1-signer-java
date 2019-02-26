@@ -11,11 +11,11 @@ import java.security.PrivateKey;
  * A Google Client API interceptor for computing and adding an OAuth1 authorization header to HTTP requests.
  * See also: https://developers.google.com/api-client-library/java/google-http-java-client/reference/1.20.0/com/google/api/client/http/HttpExecuteInterceptor.
  */
-public class OAuth1HttpExecuteInterceptor implements HttpExecuteInterceptor {
+public class HttpExecuteOAuth1Interceptor implements HttpExecuteInterceptor {
 
     private final GoogleApiClientSigner signer;
 
-    public OAuth1HttpExecuteInterceptor(String consumerKey, PrivateKey signingKey) {
+    public HttpExecuteOAuth1Interceptor(String consumerKey, PrivateKey signingKey) {
         this.signer = new GoogleApiClientSigner(consumerKey, signingKey);
     }
 

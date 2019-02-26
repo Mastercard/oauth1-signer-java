@@ -49,7 +49,7 @@ As part of this set up, you'll receive credentials for your app:
 #### Gradle
 ```
 dependencies {
-	implementation "com.mastercard.developer:oauth1-signer:$oauth1SignerVersion"
+    implementation "com.mastercard.developer:oauth1-signer:$oauth1SignerVersion"
 }	
 ```
 
@@ -61,9 +61,9 @@ See: https://search.maven.org/artifact/com.mastercard.developer/oauth1-signer
 A `PrivateKey` key object can be created by calling the `AuthenticationUtils.loadSigningKey` method:
 ```java
 PrivateKey signingKey = AuthenticationUtils.loadSigningKey(
-						"<insert PKCS#12 key file path>", 
-						"<insert key alias>", 
-						"<insert key password>");
+                                    "<insert PKCS#12 key file path>", 
+                                    "<insert key alias>", 
+                                    "<insert key password>");
 ```
 
 ### Creating the OAuth Authorization Header <a name="creating-the-oauth-authorization-header"></a>
@@ -248,15 +248,15 @@ ServiceApi serviceApi = client.createService(ServiceApi.class);
 </configuration>
 ```
 
-##### Usage of the `OAuth1HttpExecuteInterceptor`
+##### Usage of the `HttpExecuteOAuth1Interceptor`
 ```java
 HttpRequestInitializer initializer = new HttpRequestInitializer() {
     @Override
     public void initialize(HttpRequest request) {
-        request.setInterceptor(new OAuth1HttpExecuteInterceptor(consumerKey, signingKey));
+        request.setInterceptor(new HttpExecuteOAuth1Interceptor(consumerKey, signingKey));
     }
 };
 ApiClient client = new ApiClient("https://sandbox.api.mastercard.com", null, initializer, null);
-ServiceApi serviceApi = client.ServiceApi();
+ServiceApi serviceApi = client.serviceApi();
 // ...
 ```
