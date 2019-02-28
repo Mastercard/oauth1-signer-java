@@ -173,11 +173,24 @@ public class OAuth {
    * https://tools.ietf.org/html/rfc5849#section-3.3
    *
    * @return concatenation of character length of {@link OAuth#NONCE_LENGTH} minus least significant bits length from the most significant bits and characters from the least significant bits without dashes.
+   * If the most length + least length less than {@link OAuth#NONCE_LENGTH}, the number of "0" will be appended as a prefix to ensure the nonce length is 16.
    */
   static String getNonce() {
     UUID uuid = UUID.randomUUID();
     String least = Long.toString(uuid.getLeastSignificantBits(), Character.MAX_RADIX).replace("-", "");
-    String most = Long.toString(uuid.getMostSignificantBits(), Character.MAX_RADIX).replace("-", "").substring(0, NONCE_LENGTH - least.length());
+    String most = Long.toString(uuid.getMostSignificantBits(), Character.MAX_RADIX).replace("-", "");
+
+    int remainingLength = NONCE_LENGTH - least.length();
+    int mostLength = most.length();
+
+    if (mostLength >= remainingLength) {
+      most = most.substring(0, remainingLength);
+    } else {
+      for (int i = 0; i < remainingLength - mostLength; i++) {
+        most = "0" + most;
+      }
+    }
+
     return most + least;
   }
 
