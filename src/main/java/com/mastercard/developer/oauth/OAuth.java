@@ -29,6 +29,7 @@ public class OAuth {
 
   private static final Logger LOG = Logger.getLogger(OAuth.class.getName());
   private static final String HASH_ALGORITHM = "SHA-256";
+  private static final int NONCE_LENGTH = 16;
 
   /**
    * Creates a Mastercard API compliant OAuth Authorization header
@@ -171,12 +172,12 @@ public class OAuth {
    * Generates a random string for replay protection as per
    * https://tools.ietf.org/html/rfc5849#section-3.3
    *
-   * @return concatenation of 3 characters from the most significant bits and 13 characters from the least significant bits without dashes.
+   * @return concatenation of character length of {@link OAuth#NONCE_LENGTH} minus least significant bits length from the most significant bits and characters from the least significant bits without dashes.
    */
   static String getNonce() {
     UUID uuid = UUID.randomUUID();
     String least = Long.toString(uuid.getLeastSignificantBits(), Character.MAX_RADIX).replace("-", "");
-    String most = Long.toString(uuid.getMostSignificantBits(), Character.MAX_RADIX).replace("-", "").substring(0, 3);
+    String most = Long.toString(uuid.getMostSignificantBits(), Character.MAX_RADIX).replace("-", "").substring(0, NONCE_LENGTH - least.length());
     return most + least;
   }
 
