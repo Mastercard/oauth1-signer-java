@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,6 +29,7 @@ public class OAuth {
   private static final Logger LOG = Logger.getLogger(OAuth.class.getName());
   private static final String HASH_ALGORITHM = "SHA-256";
   private static final int NONCE_LENGTH = 16;
+  private static final String ALPHA_NUMERIC_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
   /**
    * Creates a Mastercard API compliant OAuth Authorization header
@@ -172,26 +172,15 @@ public class OAuth {
    * Generates a random string for replay protection as per
    * https://tools.ietf.org/html/rfc5849#section-3.3
    *
-   * @return concatenation of character length of {@link OAuth#NONCE_LENGTH} minus least significant bits length from the most significant bits and characters from the least significant bits without dashes.
-   * If the most length + least length less than {@link OAuth#NONCE_LENGTH}, the number of "0" will be appended as a prefix to ensure the nonce length is 16.
+   * @return random string of 16 characters.
    */
   static String getNonce() {
-    UUID uuid = UUID.randomUUID();
-    String least = Long.toString(uuid.getLeastSignificantBits(), Character.MAX_RADIX).replace("-", "");
-    String most = Long.toString(uuid.getMostSignificantBits(), Character.MAX_RADIX).replace("-", "");
-
-    int remainingLength = NONCE_LENGTH - least.length();
-    int mostLength = most.length();
-
-    if (mostLength >= remainingLength) {
-      most = most.substring(0, remainingLength);
-    } else {
-      for (int i = 0; i < remainingLength - mostLength; i++) {
-        most = "0" + most;
-      }
+    SecureRandom rnd = new SecureRandom();
+    StringBuilder sb = new StringBuilder(NONCE_LENGTH);
+    for (int i = 0; i < NONCE_LENGTH; i++) {
+      sb.append(ALPHA_NUMERIC_CHARS.charAt(rnd.nextInt(ALPHA_NUMERIC_CHARS.length())));
     }
-
-    return most + least;
+    return sb.toString();
   }
 
   /**
