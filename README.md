@@ -165,7 +165,7 @@ See also:
 ```java
 ApiClient client = new ApiClient();
 client.setBasePath("https://sandbox.api.mastercard.com");
-List<Interceptor> interceptors = client.getHttpClient().networkInterceptors();
+List<Interceptor> interceptors = client.getHttpClient().interceptors();
 interceptors.add(new OkHttp2OAuth1Interceptor(consumerKey, signingKey));
 ServiceApi serviceApi = new ServiceApi(client);
 // ...
@@ -210,7 +210,7 @@ ServiceApi serviceApi = client.buildClient(ServiceApi.class);
 ApiClient client = new ApiClient();
 RestAdapter.Builder adapterBuilder = client.getAdapterBuilder();
 adapterBuilder.setEndpoint("https://sandbox.api.mastercard.com"); 
-List<Interceptor> interceptors = client.getOkClient().networkInterceptors();
+List<Interceptor> interceptors = client.getOkClient().interceptors();
 interceptors.add(new OkHttp2OAuth1Interceptor(consumerKey, signingKey));
 ServiceApi serviceApi = client.createService(ServiceApi.class);
 // ...
@@ -233,7 +233,7 @@ ApiClient client = new ApiClient();
 Retrofit.Builder adapterBuilder = client.getAdapterBuilder();
 adapterBuilder.baseUrl("https://sandbox.api.mastercard.com"); 
 OkHttpClient.Builder okBuilder = client.getOkBuilder();
-okBuilder.addNetworkInterceptor(new OkHttpOAuth1Interceptor(consumerKey, signingKey));
+okBuilder.addInterceptor(new OkHttpOAuth1Interceptor(consumerKey, signingKey));
 ServiceApi serviceApi = client.createService(ServiceApi.class);
 // ...
 ```
