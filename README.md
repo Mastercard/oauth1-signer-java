@@ -51,7 +51,7 @@ As part of this set up, you'll receive credentials for your app:
 ```
 dependencies {
     implementation "com.mastercard.developer:oauth1-signer:$oauth1SignerVersion"
-}	
+}
 ```
 
 #### Other Dependency Managers
@@ -162,12 +162,26 @@ See also:
 </configuration>
 ```
 
-##### Usage of the `OkHttp2OAuth1Interceptor`
+##### Usage of the `OkHttp2OAuth1Interceptor` (OpenAPI Generator 3.3.x)
 ```java
 ApiClient client = new ApiClient();
 client.setBasePath("https://sandbox.api.mastercard.com");
 List<Interceptor> interceptors = client.getHttpClient().interceptors();
 interceptors.add(new OkHttp2OAuth1Interceptor(consumerKey, signingKey));
+ServiceApi serviceApi = new ServiceApi(client);
+// ...
+```
+
+##### Usage of the `OkHttpOAuth1Interceptor` (OpenAPI Generator 4.x.y)
+```java
+ApiClient client = new ApiClient();
+client.setBasePath("https://sandbox.api.mastercard.com");
+client.setHttpClient(
+    client.getHttpClient()
+        .newBuilder()
+        .addInterceptor(new OkHttpOAuth1Interceptor(consumerKey, signingKey))
+        .build()
+);
 ServiceApi serviceApi = new ServiceApi(client);
 // ...
 ```
