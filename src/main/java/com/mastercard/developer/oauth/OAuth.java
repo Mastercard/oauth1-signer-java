@@ -101,22 +101,28 @@ public class OAuth {
    * @return Sorted map of query parameter key/value pairs. Values for parameters with the same name are added into a list.
    */
   static TreeMap<String, List<String>> extractQueryParams(URI uri, Charset charset) {
-    final String queryParams = uri.getQuery();
-    if (queryParams == null || queryParams.isEmpty()) {
+
+    final String decodedQueryString = uri.getQuery();
+    final String rawQueryString =  uri.getRawQuery();
+    if (decodedQueryString == null || decodedQueryString.isEmpty()
+            || rawQueryString == null || rawQueryString.isEmpty()) {
+      // No query params
       return new TreeMap<>();
     }
 
+    boolean isDecoded = decodedQueryString.equals(rawQueryString);
+
     final TreeMap<String, List<String>> queryPairs = new TreeMap<>();
-    final String[] pairs = queryParams.split("&");
+    final String[] pairs = decodedQueryString.split("&");
     for (String pair : pairs) {
       final int idx = pair.indexOf('=');
       String key = idx > 0 ? pair.substring(0, idx) : pair;
       if (!queryPairs.containsKey(key)) {
-        key = Util.percentEncode(key, charset);
+        key = isDecoded ? key : Util.percentEncode(key, charset);
         queryPairs.put(key, new LinkedList<String>());
       }
       String value = idx > 0 && pair.length() > idx + 1 ? pair.substring(idx + 1) : EMPTY_STRING;
-      value = Util.percentEncode(value, charset);
+      value = isDecoded ? value : Util.percentEncode(value, charset);
       queryPairs.get(key).add(value);
     }
 
@@ -246,7 +252,7 @@ public class OAuth {
 
     digest.reset();
     // "If the request does not have an entity body, the hash should be taken over the empty string"
-    byte[] byteArray = null == payload ? "".getBytes() : payload.getBytes(charset); //
+    byte[] byteArray = null == payload ? "".getBytes() : payload.getBytes(charset);
     byte[] hash = digest.digest(byteArray);
 
     return Util.b64Encode(hash);

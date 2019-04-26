@@ -27,25 +27,122 @@ public class OAuthTest {
   }
 
   @Test
-  public void testExtractQueryParams_ShouldExtractEncodedParams() {
-    URI uri = URI.create("https://sandbox.api.mastercard.com?param1=plus+value&param2=colon:value");
-    Map<String, List<String>> queryParams = OAuth.extractQueryParams(uri, UTF8_CHARSET);
-
-    assertEquals(queryParams.toString(), 2, queryParams.size());
-    assertArrayEquals(new String[]{"plus%2Bvalue"}, queryParams.get("param1").toArray());
-    assertArrayEquals(new String[]{"colon%3Avalue"}, queryParams.get("param2").toArray());
-  }
-
-  @Test
   public void testExtractQueryParams_ShouldSupportDuplicateKeysAndEmptyValues() {
+
+    // GIVEN
     URI uri = URI.create("https://sandbox.api.mastercard.com/audiences/v1/getcountries?offset=0&offset=1&length=10&empty&odd=");
+
+    // WHEN
     Map<String, List<String>> queryParams = OAuth.extractQueryParams(uri, UTF8_CHARSET);
 
+    // THEN
     assertEquals(queryParams.toString(), 4, queryParams.size());
     assertArrayEquals(new String[]{"10"}, queryParams.get("length").toArray());
     assertArrayEquals(new String[]{"0", "1"}, queryParams.get("offset").toArray());
     assertArrayEquals(new String[]{""}, queryParams.get("empty").toArray());
     assertArrayEquals(new String[]{""}, queryParams.get("odd").toArray());
+  }
+
+  @Test
+  public void testExtractQueryParams_ShouldSupportRfcExample_WhenUriCreatedFromUriString() {
+
+    // GIVEN
+    URI uri = URI.create("https://example.com/request?b5=%3D%253D&a3=a&c%40=&a2=r%20b"); // See: https://tools.ietf.org/html/rfc5849#section-3.4.1.3.1
+    assertEquals("b5=%3D%253D&a3=a&c%40=&a2=r%20b", uri.getRawQuery());
+    assertEquals("b5==%3D&a3=a&c@=&a2=r b", uri.getQuery());
+
+    // WHEN
+    Map<String, List<String>> queryParams = OAuth.extractQueryParams(uri, UTF8_CHARSET);
+
+    // THEN
+    assertEquals(queryParams.toString(), 4, queryParams.size());
+    assertArrayEquals(new String[]{"%3D%253D"}, queryParams.get("b5").toArray());
+    assertArrayEquals(new String[]{"a"}, queryParams.get("a3").toArray());
+    assertArrayEquals(new String[]{""}, queryParams.get("c%40").toArray());
+    assertArrayEquals(new String[]{"r%20b"}, queryParams.get("a2").toArray());
+  }
+
+  @Test
+  public void testExtractQueryParams_ShouldSupportRfcExample_WhenUriCreatedFromUriComponents() throws Exception {
+
+    // GIVEN
+    URI uri = new URI("https", "example.com", "/", "b5==%3D&a3=a&c@=&a2=r b", null);
+
+    // WHEN
+    Map<String, List<String>> queryParams = OAuth.extractQueryParams(uri, UTF8_CHARSET);
+
+    // THEN
+    assertEquals(queryParams.toString(), 4, queryParams.size());
+    assertArrayEquals(new String[]{"%3D%253D"}, queryParams.get("b5").toArray());
+    assertArrayEquals(new String[]{"a"}, queryParams.get("a3").toArray());
+    assertArrayEquals(new String[]{""}, queryParams.get("c%40").toArray());
+    assertArrayEquals(new String[]{"r%20b"}, queryParams.get("a2").toArray());
+  }
+
+  @Test
+  public void testExtractQueryParams_ShouldNotEncodeParams_WhenUriCreatedFromStringWithDecodedParams() {
+
+    // GIVEN
+    URI uri = URI.create("https://example.com/request?colon=:&plus=+&comma=,");
+    assertEquals("colon=:&plus=+&comma=,", uri.getRawQuery()); // "URI.create" expects a legal URL and doesn't encode the params
+    assertEquals("colon=:&plus=+&comma=,", uri.getQuery());
+
+    // WHEN
+    Map<String, List<String>> queryParams = OAuth.extractQueryParams(uri, UTF8_CHARSET);
+
+    // THEN
+    assertEquals(queryParams.toString(), 3, queryParams.size());
+    assertArrayEquals(new String[]{":"}, queryParams.get("colon").toArray());
+    assertArrayEquals(new String[]{"+"}, queryParams.get("plus").toArray());
+    assertArrayEquals(new String[]{","}, queryParams.get("comma").toArray());
+  }
+
+  @Test
+  public void testExtractQueryParams_ShouldEncodeParams_WhenUriCreatedFromStringWithEncodedParams() {
+
+    // GIVEN
+    URI uri = URI.create("https://example.com/request?colon=%3A&plus=%2B&comma=%2C");
+    assertEquals("colon=%3A&plus=%2B&comma=%2C", uri.getRawQuery());
+    assertEquals("colon=:&plus=+&comma=,", uri.getQuery());
+
+    // WHEN
+    Map<String, List<String>> queryParams = OAuth.extractQueryParams(uri, UTF8_CHARSET);
+
+    // THEN
+    assertEquals(queryParams.toString(), 3, queryParams.size());
+    assertArrayEquals(new String[]{"%3A"}, queryParams.get("colon").toArray());
+    assertArrayEquals(new String[]{"%2B"}, queryParams.get("plus").toArray());
+    assertArrayEquals(new String[]{"%2C"}, queryParams.get("comma").toArray());
+  }
+
+  @Test
+  public void testParameterEncoding_ShouldCreateExpectedSignatureBaseString_WhenQueryParamsEncodedInUri() {
+
+    // GIVEN
+    URI uri = URI.create("https://example.com/?param=token1%3Atoken2");
+
+    // WHEN
+    TreeMap<String, List<String>> queryParams = OAuth.extractQueryParams(uri, UTF8_CHARSET);
+    String paramString = OAuth.toOauthParamString(queryParams, new HashMap<String, String>());
+    String baseString = OAuth.getSignatureBaseString("GET", "https://example.com", paramString, UTF8_CHARSET);
+
+    // THEN
+    assertEquals("GET&https%3A%2F%2Fexample.com&param%3Dtoken1%253Atoken2", baseString);
+  }
+
+  @Test
+  public void testParameterEncoding_ShouldCreateExpectedSignatureBaseString_WhenQueryParamsNotEncodedInUri() {
+
+    // GIVEN
+    URI uri = URI.create("https://example.com/?param=token1:token2");
+
+    // WHEN
+    TreeMap<String, List<String>> queryParams = OAuth.extractQueryParams(uri, UTF8_CHARSET);
+    String paramString = OAuth.toOauthParamString(queryParams, new HashMap<String, String>());
+    String baseString = OAuth.getSignatureBaseString("GET", "https://example.com", paramString, UTF8_CHARSET);
+
+    // THEN
+    assertEquals("GET&https%3A%2F%2Fexample.com&param%3Dtoken1%3Atoken2", baseString);
   }
 
   @Test
