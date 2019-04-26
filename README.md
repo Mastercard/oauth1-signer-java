@@ -3,7 +3,7 @@
 [![](https://travis-ci.org/Mastercard/oauth1-signer-java.svg?branch=master)](https://travis-ci.org/Mastercard/oauth1-signer-java)
 [![](https://sonarcloud.io/api/project_badges/measure?project=Mastercard_oauth1-signer-java&metric=alert_status)](https://sonarcloud.io/dashboard?id=Mastercard_oauth1-signer-java) 
 [![](https://img.shields.io/maven-central/v/com.mastercard.developer/oauth1-signer.svg)](https://search.maven.org/artifact/com.mastercard.developer/oauth1-signer/)
-[![](https://www.javadoc.io/badge/com.mastercard.developer/oauth1-signer.svg?color=blue)](https://www.javadoc.io/doc/com.mastercard.developer/client-encryption)
+[![](https://www.javadoc.io/badge/com.mastercard.developer/oauth1-signer.svg?color=blue)](https://www.javadoc.io/doc/com.mastercard.developer/oauth1-signer)
 [![](https://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/Mastercard/oauth1-signer-java/blob/master/LICENSE)
 
 ## Table of Contents
