@@ -110,19 +110,18 @@ public class OAuth {
       return new TreeMap<>();
     }
 
-    boolean isDecoded = decodedQueryString.equals(rawQueryString);
-
+    boolean mustEncode = !decodedQueryString.equals(rawQueryString);
     final TreeMap<String, List<String>> queryPairs = new TreeMap<>();
     final String[] pairs = decodedQueryString.split("&");
     for (String pair : pairs) {
       final int idx = pair.indexOf('=');
       String key = idx > 0 ? pair.substring(0, idx) : pair;
       if (!queryPairs.containsKey(key)) {
-        key = isDecoded ? key : Util.percentEncode(key, charset);
+        key = mustEncode ? Util.percentEncode(key, charset) : key;
         queryPairs.put(key, new LinkedList<String>());
       }
       String value = idx > 0 && pair.length() > idx + 1 ? pair.substring(idx + 1) : EMPTY_STRING;
-      value = isDecoded ? value : Util.percentEncode(value, charset);
+      value = mustEncode ? Util.percentEncode(value, charset) : value;
       queryPairs.get(key).add(value);
     }
 
