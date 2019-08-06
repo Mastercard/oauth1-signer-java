@@ -13,6 +13,7 @@
     <name>oauth1-signer</name>
 
     <properties>
+        <spring-version>5.1.9.RELEASE</spring-version>
         <okhttp2-version>2.7.5</okhttp2-version>
         <okhttp3-version>3.12.0</okhttp3-version>
         <google-api-client-version>1.23.0</google-api-client-version>
@@ -53,6 +54,12 @@
     </distributionManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring-version}</version>
+        </dependency>
+        
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
