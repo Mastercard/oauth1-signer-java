@@ -15,27 +15,27 @@ import org.springframework.http.MediaType;
  */
 public class SpringHttpRequestSigner extends AbstractSigner {
     
-  public SpringHttpRequestSigner(String consumerKey, PrivateKey signingKey) {
-    super(consumerKey, signingKey);
-  }
-
-  public void sign(HttpRequest request, byte[] bytes) {
-    HttpHeaders headers = request.getHeaders();
-    Charset charset = getCharset(headers);
-    String payload = new String(bytes, charset);
-    String authHeader = OAuth.getAuthorizationHeader(request.getURI(), request.getMethod().toString(), payload, charset, consumerKey, signingKey);
-    headers.add(OAuth.AUTHORIZATION_HEADER_NAME, authHeader);
-  }
-  
-  private static Charset getCharset(HttpHeaders headers){
-    Charset defaultCharset = Charset.defaultCharset();
-    MediaType contentType = headers.getContentType();
-    if(contentType != null){
-      Charset charset = contentType.getCharset();
-      if(charset != null){
-        return charset;
-      }
+    public SpringHttpRequestSigner(String consumerKey, PrivateKey signingKey) {
+        super(consumerKey, signingKey);
     }
-    return defaultCharset;
-  }
+    
+    public void sign(HttpRequest request, byte[] bytes) {
+        HttpHeaders headers = request.getHeaders();
+        Charset charset = getCharset(headers);
+        String payload = new String(bytes, charset);
+        String authHeader = OAuth.getAuthorizationHeader(request.getURI(), request.getMethod().toString(), payload, charset, consumerKey, signingKey);
+        headers.add(OAuth.AUTHORIZATION_HEADER_NAME, authHeader);
+    }
+    
+    private static Charset getCharset(HttpHeaders headers){
+        Charset defaultCharset = Charset.defaultCharset();
+        MediaType contentType = headers.getContentType();
+        if(contentType != null){
+            Charset charset = contentType.getCharset();
+            if(charset != null){
+                return charset;
+            }
+        }
+        return defaultCharset;
+    }
 }
