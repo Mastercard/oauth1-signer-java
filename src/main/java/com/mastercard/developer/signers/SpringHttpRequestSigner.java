@@ -5,7 +5,6 @@ import com.mastercard.developer.oauth.OAuth;
 import java.nio.charset.Charset;
 import java.security.PrivateKey;
 
-import org.springframework.http.HttpMessage;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -22,7 +21,7 @@ public class SpringHttpRequestSigner extends AbstractSigner {
     public void sign(HttpRequest request, byte[] bytes) {
         HttpHeaders headers = request.getHeaders();
         Charset charset = getCharset(headers);
-        String payload = new String(bytes, charset);
+        String payload = (null==bytes ? null : new String(bytes, charset));
         String authHeader = OAuth.getAuthorizationHeader(request.getURI(), request.getMethod().toString(), payload, charset, consumerKey, signingKey);
         headers.add(OAuth.AUTHORIZATION_HEADER_NAME, authHeader);
     }
