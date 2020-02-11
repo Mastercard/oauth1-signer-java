@@ -17,7 +17,7 @@ public final class SecurityUtils {
     @Deprecated
     public static PrivateKey loadPrivateKey(String pkcs12KeyFilePath,
                                             String keyAlias,
-                                            String keyPassword) throws IOException, NoSuchProviderException, KeyStoreException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
+                                            String keyPassword) throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
         return AuthenticationUtils.loadSigningKey(pkcs12KeyFilePath, keyAlias, keyPassword);
     }
 }
