@@ -206,8 +206,7 @@ public class OAuthTest {
 
     uri = URI.create("http://EXAMPLE.COM:80/r%20v/X?id=123");
     baseUri = OAuth.getBaseUriString(uri);
-    // /!\ According to https://tools.ietf.org/html/rfc5849#section-3.4.1.2 it seems we should get "r%20v", not "r%2520v"
-    assertEquals("http://example.com/r%2520v/X", baseUri);
+    assertEquals("http://example.com/r%20v/X", baseUri);
   }
 
   @Test
@@ -244,6 +243,17 @@ public class OAuthTest {
     URI uri = URI.create("HTTPS://API.MASTERCARD.COM/TEST");
     String baseUri = OAuth.getBaseUriString(uri);
     assertEquals("https://api.mastercard.com/TEST", baseUri);
+  }
+
+  @Test
+  public void testGetBaseUriString_ShouldNotNormalizeEncodedChars() {
+    URI uri = URI.create("https://api.mastercard.com/service/api/test%40test");
+    String baseUri = OAuth.getBaseUriString(uri);
+    assertEquals("https://api.mastercard.com/service/api/test%40test", baseUri);
+
+    uri = URI.create("http://example.com/r%20v/X?id=123");
+    baseUri = OAuth.getBaseUriString(uri);
+    assertEquals("http://example.com/r%20v/X", baseUri);
   }
 
   @Test

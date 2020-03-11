@@ -224,12 +224,7 @@ public class OAuth {
       path = "/";
     }
 
-    try {
-      // Remove query and fragment
-      return new URI(scheme, authority, path, null, null).toString();
-    } catch (URISyntaxException e) {
-      throw new IllegalArgumentException("Unable to normalize provided URL due to: " + e.getMessage());
-    }
+    return scheme + "://" + authority + path;
   }
 
   /**
