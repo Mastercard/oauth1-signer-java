@@ -211,14 +211,14 @@ public class OAuthTest {
   }
 
   @Test
-  public void testGetBaseUriString_ShouldNotEncodePathParams() {
+  public void testGetBaseUriString_ShouldNotEncodePathSegments() {
     URI uri = URI.create("https://www.example.net:8080/foo@bar/test?query=test");
     String baseUri = OAuth.getBaseUriString(uri);
     assertEquals("https://www.example.net:8080/foo@bar/test", baseUri);
   }
 
   @Test
-  public void testGetBaseUriString_ShouldNotDoubleEncodePathParams() {
+  public void testGetBaseUriString_ShouldNotDoubleEncodePathSegments() {
     URI uri = URI.create("https://www.example.net:8080/foo%40bar/test?query=test");
     String baseUri = OAuth.getBaseUriString(uri);
     assertEquals("https://www.example.net:8080/foo%40bar/test", baseUri);
