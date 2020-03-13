@@ -1,7 +1,6 @@
 package com.mastercard.developer.oauth;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.security.*;
 import java.util.Arrays;
