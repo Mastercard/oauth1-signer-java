@@ -211,6 +211,20 @@ public class OAuthTest {
   }
 
   @Test
+  public void testGetBaseUriString_ShouldNotEncodePathParams() {
+    URI uri = URI.create("https://www.example.net:8080/foo@bar/test?query=test");
+    String baseUri = OAuth.getBaseUriString(uri);
+    assertEquals("https://www.example.net:8080/foo@bar/test", baseUri);
+  }
+
+  @Test
+  public void testGetBaseUriString_ShouldNotDoubleEncodePathParams() {
+    URI uri = URI.create("https://www.example.net:8080/foo%40bar/test?query=test");
+    String baseUri = OAuth.getBaseUriString(uri);
+    assertEquals("https://www.example.net:8080/foo%40bar/test", baseUri);
+  }
+
+  @Test
   public void testGetBaseUriString_ShouldRemoveRedundantPorts() {
     URI uri = URI.create("https://api.mastercard.com:443/test?query=param");
     String baseUri = OAuth.getBaseUriString(uri);
