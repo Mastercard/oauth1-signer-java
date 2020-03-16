@@ -204,10 +204,10 @@ public class OAuthTest {
     String baseUri = OAuth.getBaseUriString(uri);
     assertEquals("https://www.example.net:8080/", baseUri);
 
+    // https://tools.ietf.org/html/rfc5849#section-3.4.1.2
     uri = URI.create("http://EXAMPLE.COM:80/r%20v/X?id=123");
     baseUri = OAuth.getBaseUriString(uri);
-    // /!\ According to https://tools.ietf.org/html/rfc5849#section-3.4.1.2 it seems we should get "r%20v", not "r%2520v"
-    assertEquals("http://example.com/r%2520v/X", baseUri);
+    assertEquals("http://example.com/r%20v/X", baseUri);
   }
 
   @Test
@@ -244,6 +244,40 @@ public class OAuthTest {
     URI uri = URI.create("HTTPS://API.MASTERCARD.COM/TEST");
     String baseUri = OAuth.getBaseUriString(uri);
     assertEquals("https://api.mastercard.com/TEST", baseUri);
+  }
+
+  @Test
+  public void testGetBaseUriString_ShouldNotNormalizeEncodedChars() {
+    URI uri = URI.create("https://www.example.com/api/test%40test");
+    String baseUri = OAuth.getBaseUriString(uri);
+    assertEquals("https://www.example.com/api/test%40test", baseUri);
+
+    uri = URI.create("http://example.com/r%20v/X?id=123");
+    baseUri = OAuth.getBaseUriString(uri);
+    assertEquals("http://example.com/r%20v/X", baseUri);
+
+    uri = URI.create("http://example.com/r%2540v/X?id=123");
+    baseUri = OAuth.getBaseUriString(uri);
+    assertEquals("http://example.com/r%2540v/X", baseUri);
+  }
+
+  @Test
+  public void testGetBaseUriString_ShouldNotEncodePathSegments() {
+    URI uri = URI.create("https://www.example.net:8080/foo@bar/test?query=test");
+    String baseUri = OAuth.getBaseUriString(uri);
+    assertEquals("https://www.example.net:8080/foo@bar/test", baseUri);
+
+    uri = URI.create("https://www.example.net:8080/foo&bar/test?query=test");
+    baseUri = OAuth.getBaseUriString(uri);
+    assertEquals("https://www.example.net:8080/foo&bar/test", baseUri);
+
+    uri = URI.create("https://www.example.net:8080/foo(bar/test?query=test");
+    baseUri = OAuth.getBaseUriString(uri);
+    assertEquals("https://www.example.net:8080/foo(bar/test", baseUri);
+
+    uri = URI.create("https://www.example.net:8080/foo=bar/test?query=test");
+    baseUri = OAuth.getBaseUriString(uri);
+    assertEquals("https://www.example.net:8080/foo=bar/test", baseUri);
   }
 
   @Test
