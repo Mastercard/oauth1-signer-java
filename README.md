@@ -1,7 +1,8 @@
 # oauth1-signer-java
 
 [![](https://travis-ci.org/Mastercard/oauth1-signer-java.svg?branch=master)](https://travis-ci.org/Mastercard/oauth1-signer-java)
-[![](https://sonarcloud.io/api/project_badges/measure?project=Mastercard_oauth1-signer-java&metric=alert_status)](https://sonarcloud.io/dashboard?id=Mastercard_oauth1-signer-java) 
+[![](https://sonarcloud.io/api/project_badges/measure?project=Mastercard_oauth1-signer-java&metric=alert_status)](https://sonarcloud.io/dashboard?id=Mastercard_oauth1-signer-java)
+[![](https://github.com/Mastercard/oauth1-signer-java/workflows/broken%20links%3F/badge.svg)](https://github.com/Mastercard/oauth1-signer-java/actions?query=workflow%3Abroken)
 [![](https://img.shields.io/maven-central/v/com.mastercard.developer/oauth1-signer.svg)](https://search.maven.org/artifact/com.mastercard.developer/oauth1-signer/)
 [![](https://www.javadoc.io/badge/com.mastercard.developer/oauth1-signer.svg?color=blue)](https://www.javadoc.io/doc/com.mastercard.developer/oauth1-signer)
 [![](https://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/Mastercard/oauth1-signer-java/blob/master/LICENSE)
