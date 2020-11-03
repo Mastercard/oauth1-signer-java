@@ -9,11 +9,11 @@ public abstract class AbstractSigner {
   protected final PrivateKey signingKey;
   protected final Charset charset;
 
-  public AbstractSigner(String consumerKey, PrivateKey signingKey) {
+  protected AbstractSigner(String consumerKey, PrivateKey signingKey) {
     this(Charset.defaultCharset(), consumerKey, signingKey);
   }
 
-  public AbstractSigner(Charset charset, String consumerKey, PrivateKey signingKey) {
+  protected AbstractSigner(Charset charset, String consumerKey, PrivateKey signingKey) {
     this.consumerKey = consumerKey;
     this.signingKey = signingKey;
     this.charset = charset;

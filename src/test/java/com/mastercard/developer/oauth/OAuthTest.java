@@ -3,6 +3,8 @@ package com.mastercard.developer.oauth;
 import com.mastercard.developer.test.TestUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -225,25 +227,16 @@ public class OAuthTest {
     assertEquals("https://api.mastercard.com:17443/test", baseUri);
   }
 
-  @Test
-  public void testGetBaseUriString_ShouldRemoveFragments() {
-    URI uri = URI.create("https://api.mastercard.com/test?query=param#fragment");
+  @ParameterizedTest
+  @CsvSource({
+          "/test?query=param#fragment, test",
+          "'', ''",
+          "/TEST, TEST"
+  })
+  public void testGetBaseUriString_ShouldRemoveFragments(String createUri, String expectedUri) {
+    URI uri = URI.create(String.format("https://api.mastercard.com%s", createUri));
     String baseUri = OAuth.getBaseUriString(uri);
-    assertEquals("https://api.mastercard.com/test", baseUri);
-  }
-
-  @Test
-  public void testGetBaseUriString_ShouldAddTrailingSlash() {
-    URI uri = URI.create("https://api.mastercard.com");
-    String baseUri = OAuth.getBaseUriString(uri);
-    assertEquals("https://api.mastercard.com/", baseUri);
-  }
-
-  @Test
-  public void testGetBaseUriString_ShouldUseLowercaseSchemesAndHosts() {
-    URI uri = URI.create("HTTPS://API.MASTERCARD.COM/TEST");
-    String baseUri = OAuth.getBaseUriString(uri);
-    assertEquals("https://api.mastercard.com/TEST", baseUri);
+    assertEquals(String.format("https://api.mastercard.com/%s", expectedUri), baseUri);
   }
 
   @Test

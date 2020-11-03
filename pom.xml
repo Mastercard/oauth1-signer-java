@@ -60,7 +60,7 @@
             <version>${spring-version}</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -104,6 +104,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>5.7.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>2.9.1</version> <!-- We can't bump this one because of the Java 7 support -->
@@ -119,9 +126,9 @@
             </activation>
             <properties>
                 <!-- The Javadoc generation started to fail with OpenJDK 11.0.2 (11.0.1 was OK) and OpenJDK 12-ea:
-                     "The code being documented uses modules but the packages defined in 
+                     "The code being documented uses modules but the packages defined in
                      https://docs.oracle.com/javase/7/docs/api/ are in the unnamed module."
-                     See: https://bugs.openjdk.java.net/browse/JDK-8212233 
+                     See: https://bugs.openjdk.java.net/browse/JDK-8212233
                 -->
                 <maven.javadoc.skip>true</maven.javadoc.skip>
             </properties>
