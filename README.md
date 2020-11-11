@@ -177,9 +177,11 @@ ServiceApi serviceApi = new ServiceApi(client);
 ```java
 ApiClient client = new ApiClient();
 client.setBasePath("https://sandbox.api.mastercard.com");
+Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("https://proxy-url.com", 8866)); // Optional Proxy Configuration
 client.setHttpClient(
     client.getHttpClient()
         .newBuilder()
+        .proxy(proxy) // Optional proxy
         .addInterceptor(new OkHttpOAuth1Interceptor(consumerKey, signingKey))
         .build()
 );
