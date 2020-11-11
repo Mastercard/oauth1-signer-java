@@ -147,9 +147,6 @@ Library options currently supported for the `java` generator:
 + [retrofit2](#retrofit2)
 + [google-api-client](#google-api-client)
 
-Configuring a proxy:
-+ [okhttp-gson proxy](#okhttp-gson-proxy)
-
 See also:
 * [OpenAPI Generator (maven Plugin)](https://mvnrepository.com/artifact/org.openapitools/openapi-generator-maven-plugin)
 * [OpenAPI Generator (executable)](https://mvnrepository.com/artifact/org.openapitools/openapi-generator-cli)
@@ -180,9 +177,11 @@ ServiceApi serviceApi = new ServiceApi(client);
 ```java
 ApiClient client = new ApiClient();
 client.setBasePath("https://sandbox.api.mastercard.com");
+Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("https://proxy-url.com", 8866)); // Optional Proxy Configuration
 client.setHttpClient(
     client.getHttpClient()
         .newBuilder()
+        .proxy(proxy) // Optional proxy
         .addInterceptor(new OkHttpOAuth1Interceptor(consumerKey, signingKey))
         .build()
 );
@@ -279,20 +278,4 @@ HttpRequestInitializer initializer = new HttpRequestInitializer() {
 ApiClient client = new ApiClient("https://sandbox.api.mastercard.com", null, initializer, null);
 ServiceApi serviceApi = client.serviceApi();
 // ...
-```
-
-#### okhttp-gson proxy <a name="okhttp-gson-proxy"></a>
-##### Usage of the OpenAPI Generator 4.x.y
-```java
-ApiClient client = new ApiClient();
-client.setBasePath("https://sandbox.api.mastercard.com");
-Proxy proxyConfig = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("https://proxy.com", 8866));
-client.setHttpClient(
-    client.getHttpClient()
-        .newBuilder()
-        .proxy(proxyConfig)
-        .addInterceptor(new OkHttpOAuth1Interceptor(consumerKey, signingKey))
-        .build()
-);
-ServiceApi serviceApi = new ServiceApi(client);
 ```
