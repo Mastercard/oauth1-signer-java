@@ -20,7 +20,7 @@ jobs:
       with:
         java-version: 11
     - name: Build with Maven
-      run: mvn -B package -Dgpg.signature.skip=true -DskipTests --file pom.xml
+      run: mvn clean install -Dgpg.signature.skip=true --file pom.xml
     - name: Sonar Scan
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
