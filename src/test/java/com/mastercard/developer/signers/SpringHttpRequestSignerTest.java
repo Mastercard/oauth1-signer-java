@@ -55,11 +55,11 @@ public class SpringHttpRequestSignerTest {
 	
 	@Test
 	public void testSignShouldAddOAuth1HeaderToPostRequest() {
-	
+
 		// WHEN
 		SpringHttpRequestSigner instanceUnderTest = new SpringHttpRequestSigner(DEFAULT_CONSUMER_KEY, signingKey);
 		instanceUnderTest.sign(request, DEFAULT_BODY.getBytes());
-		
+
 		// THEN
 		String authorizationHeaderValue = headers.getFirst(HttpHeaders.AUTHORIZATION);
 		Assert.assertNotNull(authorizationHeaderValue);
@@ -159,4 +159,31 @@ public class SpringHttpRequestSignerTest {
 		Assert.assertNotNull(authorizationHeaderValue);
 	}
 
+	@Test(expected = IllegalStateException.class) // THEN
+	public void testSign_ShouldThrowIllegalStateException_WhenNullHttpMethod() {
+
+		// GIVEN
+		request = new HttpRequest() {
+			@Override
+			public HttpMethod getMethod(){
+				return null;
+			}
+			@Override
+			public String getMethodValue(){
+				return "something";
+			}
+			@Override
+			public URI getURI(){
+				return uri;
+			}
+			@Override
+			public HttpHeaders getHeaders(){
+				return headers;
+			}
+		};
+
+		// WHEN
+		SpringHttpRequestSigner instanceUnderTest = new SpringHttpRequestSigner(DEFAULT_CONSUMER_KEY, signingKey);
+		instanceUnderTest.sign(request, null);
+	}
 }

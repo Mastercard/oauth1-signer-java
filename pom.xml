@@ -6,18 +6,18 @@
 
     <groupId>com.mastercard.developer</groupId>
     <artifactId>oauth1-signer</artifactId>
-    <version>1.2.5-SNAPSHOT</version>
+    <version>1.5.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>Zero dependency library for generating a Mastercard API compliant OAuth signature</description>
     <url>https://github.com/Mastercard/oauth1-signer-java</url>
     <name>oauth1-signer</name>
 
     <properties>
-        <spring-version>5.1.9.RELEASE</spring-version>
+        <spring-version>5.2.8.RELEASE</spring-version>
         <okhttp2-version>2.7.5</okhttp2-version>
-        <okhttp3-version>3.12.0</okhttp3-version>
+        <okhttp3-version>4.8.1</okhttp3-version>
         <google-api-client-version>1.23.0</google-api-client-version>
-        <feign-version>9.4.0</feign-version>
+        <feign-version>9.7.0</feign-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <gpg.signature.skip>false</gpg.signature.skip>
     </properties>
@@ -60,11 +60,11 @@
             <version>${spring-version}</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.5</version>
+            <version>4.5.12</version>
             <scope>provided</scope>
         </dependency>
 
@@ -99,14 +99,21 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>5.7.0</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>1.7.1</version>
+            <version>2.9.1</version> <!-- We can't bump this one because of the Java 7 support -->
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -119,9 +126,9 @@
             </activation>
             <properties>
                 <!-- The Javadoc generation started to fail with OpenJDK 11.0.2 (11.0.1 was OK) and OpenJDK 12-ea:
-                     "The code being documented uses modules but the packages defined in 
+                     "The code being documented uses modules but the packages defined in
                      https://docs.oracle.com/javase/7/docs/api/ are in the unnamed module."
-                     See: https://bugs.openjdk.java.net/browse/JDK-8212233 
+                     See: https://bugs.openjdk.java.net/browse/JDK-8212233
                 -->
                 <maven.javadoc.skip>true</maven.javadoc.skip>
             </properties>
@@ -134,7 +141,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.0</version>
+                    <version>3.8.1</version>
                     <configuration>
                         <source>1.7</source>
                         <target>1.7</target>
@@ -146,7 +153,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.3</version>
+                <version>0.8.5</version>
                 <executions>
                     <execution>
                         <id>pre-unit-test</id>
@@ -183,7 +190,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -196,7 +203,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <id>generate-javadoc</id>

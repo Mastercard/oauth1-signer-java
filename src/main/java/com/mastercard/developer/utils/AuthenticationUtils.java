@@ -28,7 +28,7 @@ public final class AuthenticationUtils {
     public static PrivateKey loadSigningKey(InputStream pkcs12KeyInputStream,
                                             String signingKeyAlias,
                                             String signingKeyPassword) throws IOException, NoSuchProviderException, KeyStoreException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
-        KeyStore pkcs12KeyStore = KeyStore.getInstance("PKCS12", "SunJSSE");
+        KeyStore pkcs12KeyStore = KeyStore.getInstance("PKCS12");
         pkcs12KeyStore.load(pkcs12KeyInputStream, signingKeyPassword.toCharArray());
         return (PrivateKey) pkcs12KeyStore.getKey(signingKeyAlias, signingKeyPassword.toCharArray());
     }

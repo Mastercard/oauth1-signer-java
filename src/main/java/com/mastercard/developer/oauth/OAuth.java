@@ -1,7 +1,6 @@
 package com.mastercard.developer.oauth;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.security.*;
 import java.util.Arrays;
@@ -118,7 +117,8 @@ public class OAuth {
       String key = idx > 0 ? pair.substring(0, idx) : pair;
       if (!queryPairs.containsKey(key)) {
         key = mustEncode ? Util.percentEncode(key, charset) : key;
-        queryPairs.put(key, new LinkedList<String>());
+        List<String> list = new LinkedList<>();
+        queryPairs.put(key, list);
       }
       String value = idx > 0 && pair.length() > idx + 1 ? pair.substring(idx + 1) : EMPTY_STRING;
       value = mustEncode ? Util.percentEncode(value, charset) : value;
@@ -224,12 +224,7 @@ public class OAuth {
       path = "/";
     }
 
-    try {
-      // Remove query and fragment
-      return new URI(scheme, authority, path, null, null).toString();
-    } catch (URISyntaxException e) {
-      throw new IllegalArgumentException("Unable to normalize provided URL due to: " + e.getMessage());
-    }
+    return scheme + "://" + authority + path;
   }
 
   /**

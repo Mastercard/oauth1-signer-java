@@ -5,6 +5,7 @@ import com.mastercard.developer.oauth.OAuth;
 import java.nio.charset.Charset;
 import java.security.PrivateKey;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -19,10 +20,14 @@ public class SpringHttpRequestSigner extends AbstractSigner {
     }
     
     public void sign(HttpRequest request, byte[] bytes) {
+        HttpMethod method = request.getMethod();
+        if (method == null) {
+            throw new IllegalStateException("Can't sign a request with a null HTTP method!");
+        }
         HttpHeaders headers = request.getHeaders();
         Charset charset = getCharset(headers);
-        String payload = (null==bytes ? null : new String(bytes, charset));
-        String authHeader = OAuth.getAuthorizationHeader(request.getURI(), request.getMethod().toString(), payload, charset, consumerKey, signingKey);
+        String payload = (null == bytes ? null : new String(bytes, charset));
+        String authHeader = OAuth.getAuthorizationHeader(request.getURI(), method.toString(), payload, charset, consumerKey, signingKey);
         headers.add(OAuth.AUTHORIZATION_HEADER_NAME, authHeader);
     }
     

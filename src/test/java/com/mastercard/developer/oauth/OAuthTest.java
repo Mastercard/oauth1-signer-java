@@ -3,6 +3,8 @@ package com.mastercard.developer.oauth;
 import com.mastercard.developer.test.TestUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -204,10 +206,10 @@ public class OAuthTest {
     String baseUri = OAuth.getBaseUriString(uri);
     assertEquals("https://www.example.net:8080/", baseUri);
 
+    // https://tools.ietf.org/html/rfc5849#section-3.4.1.2
     uri = URI.create("http://EXAMPLE.COM:80/r%20v/X?id=123");
     baseUri = OAuth.getBaseUriString(uri);
-    // /!\ According to https://tools.ietf.org/html/rfc5849#section-3.4.1.2 it seems we should get "r%20v", not "r%2520v"
-    assertEquals("http://example.com/r%2520v/X", baseUri);
+    assertEquals("http://example.com/r%20v/X", baseUri);
   }
 
   @Test
@@ -225,25 +227,50 @@ public class OAuthTest {
     assertEquals("https://api.mastercard.com:17443/test", baseUri);
   }
 
-  @Test
-  public void testGetBaseUriString_ShouldRemoveFragments() {
-    URI uri = URI.create("https://api.mastercard.com/test?query=param#fragment");
+  @ParameterizedTest
+  @CsvSource({
+          "/test?query=param#fragment, test",
+          "'', ''",
+          "/TEST, TEST"
+  })
+  public void testGetBaseUriString_ShouldRemoveFragments(String createUri, String expectedUri) {
+    URI uri = URI.create(String.format("https://api.mastercard.com%s", createUri));
     String baseUri = OAuth.getBaseUriString(uri);
-    assertEquals("https://api.mastercard.com/test", baseUri);
+    assertEquals(String.format("https://api.mastercard.com/%s", expectedUri), baseUri);
   }
 
   @Test
-  public void testGetBaseUriString_ShouldAddTrailingSlash() {
-    URI uri = URI.create("https://api.mastercard.com");
+  public void testGetBaseUriString_ShouldNotNormalizeEncodedChars() {
+    URI uri = URI.create("https://www.example.com/api/test%40test");
     String baseUri = OAuth.getBaseUriString(uri);
-    assertEquals("https://api.mastercard.com/", baseUri);
+    assertEquals("https://www.example.com/api/test%40test", baseUri);
+
+    uri = URI.create("http://example.com/r%20v/X?id=123");
+    baseUri = OAuth.getBaseUriString(uri);
+    assertEquals("http://example.com/r%20v/X", baseUri);
+
+    uri = URI.create("http://example.com/r%2540v/X?id=123");
+    baseUri = OAuth.getBaseUriString(uri);
+    assertEquals("http://example.com/r%2540v/X", baseUri);
   }
 
   @Test
-  public void testGetBaseUriString_ShouldUseLowercaseSchemesAndHosts() {
-    URI uri = URI.create("HTTPS://API.MASTERCARD.COM/TEST");
+  public void testGetBaseUriString_ShouldNotEncodePathSegments() {
+    URI uri = URI.create("https://www.example.net:8080/foo@bar/test?query=test");
     String baseUri = OAuth.getBaseUriString(uri);
-    assertEquals("https://api.mastercard.com/TEST", baseUri);
+    assertEquals("https://www.example.net:8080/foo@bar/test", baseUri);
+
+    uri = URI.create("https://www.example.net:8080/foo&bar/test?query=test");
+    baseUri = OAuth.getBaseUriString(uri);
+    assertEquals("https://www.example.net:8080/foo&bar/test", baseUri);
+
+    uri = URI.create("https://www.example.net:8080/foo(bar/test?query=test");
+    baseUri = OAuth.getBaseUriString(uri);
+    assertEquals("https://www.example.net:8080/foo(bar/test", baseUri);
+
+    uri = URI.create("https://www.example.net:8080/foo=bar/test?query=test");
+    baseUri = OAuth.getBaseUriString(uri);
+    assertEquals("https://www.example.net:8080/foo=bar/test", baseUri);
   }
 
   @Test
