@@ -1,4 +1,5 @@
 # oauth1-signer-java
+<img src="https://developer.mastercard.com/img/logo_cogs.svg" />
 
 [![](https://github.com/Mastercard/oauth1-signer-java/workflows/Build%20&%20Test/badge.svg)](https://github.com/Mastercard/oauth1-signer-java/actions?query=workflow%3A%22Build+%26+Test%22)
 [![](https://sonarcloud.io/api/project_badges/measure?project=Mastercard_oauth1-signer-java&metric=alert_status)](https://sonarcloud.io/dashboard?id=Mastercard_oauth1-signer-java)
