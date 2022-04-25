@@ -6,7 +6,7 @@
 
     <groupId>com.mastercard.developer</groupId>
     <artifactId>oauth1-signer</artifactId>
-    <version>1.5.2-SNAPSHOT</version>
+    <version>1.5.2</version>
     <packaging>jar</packaging>
     <description>Zero dependency library for generating a Mastercard API compliant OAuth signature</description>
     <url>https://github.com/Mastercard/oauth1-signer-java</url>
