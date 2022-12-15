@@ -174,7 +174,7 @@ ServiceApi serviceApi = new ServiceApi(client);
 // ...
 ```
 
-##### Usage of the `OkHttpOAuth1Interceptor` (OpenAPI Generator 4.x.y)
+##### Usage of the `OkHttpOAuth1Interceptor` (OpenAPI Generator 4+)
 ```java
 ApiClient client = new ApiClient();
 client.setBasePath("https://sandbox.api.mastercard.com");
