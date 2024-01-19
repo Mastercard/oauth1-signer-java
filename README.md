@@ -12,6 +12,7 @@
 - [Overview](#overview)
   * [Compatibility](#compatibility)
   * [References](#references)
+  * [Versioning and Deprecation Policy](#versioning)
 - [Usage](#usage)
   * [Prerequisites](#prerequisites)
   * [Adding the Library to Your Project](#adding-the-library-to-your-project)
@@ -29,6 +30,9 @@ Java 7+
 ### References <a name="references"></a>
 * [OAuth 1.0a specification](https://tools.ietf.org/html/rfc5849)
 * [Body hash extension for non application/x-www-form-urlencoded payloads](https://tools.ietf.org/id/draft-eaton-oauth-bodyhash-00.html)
+
+### Versioning and Deprecation Policy <a name="versioning"></a>
+* [Mastercard Versioning and Deprecation Policy](https://github.com/Mastercard/.github/blob/main/CLIENT_LIBRARY_DEPRECATION_POLICY.md)
 
 ## Usage <a name="usage"></a>
 ### Prerequisites <a name="prerequisites"></a>
