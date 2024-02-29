@@ -39,7 +39,7 @@ Java 7+
 Before using this library, you will need to set up a project in the [Mastercard Developers Portal](https://developer.mastercard.com). 
 
 As part of this set up, you'll receive credentials for your app:
-* A consumer key (displayed on the Mastercard Developer Portal) BLAH BLAH
+* A consumer key (displayed on the Mastercard Developer Portal)
 * A private request signing key (matching the public certificate displayed on the Mastercard Developer Portal)
 
 ### Adding the Library to Your Project <a name="adding-the-library-to-your-project"></a>
