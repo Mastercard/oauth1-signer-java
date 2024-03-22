@@ -13,7 +13,7 @@
     <name>oauth1-signer</name>
 
     <properties>
-        <spring-version>5.3.3</spring-version>
+        <spring-version>5.3.32</spring-version>
         <okhttp2-version>2.7.5</okhttp2-version>
         <okhttp3-version>4.12.0</okhttp3-version>
         <google-api-client-version>2.3.0</google-api-client-version>
