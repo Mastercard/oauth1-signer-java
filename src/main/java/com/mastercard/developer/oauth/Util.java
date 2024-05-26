@@ -28,10 +28,7 @@ public final class Util {
     }
 
     try {
-      return URLEncoder.encode(str, charset.name())
-          .replace("+", "%20")
-          .replace("*", "%2A")
-          .replace("%7E", "~");
+      return URLEncoder.encode(str, charset.name());
     } catch (UnsupportedEncodingException e) {
       throw new IllegalArgumentException("Unable to decode URL using " + charset.displayName() + " encoding", e);
     }
