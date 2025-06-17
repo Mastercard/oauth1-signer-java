@@ -6,7 +6,7 @@
 
     <groupId>com.mastercard.developer</groupId>
     <artifactId>oauth1-signer</artifactId>
-    <version>1.5.3</version>
+    <version>1.5.4</version>
     <packaging>jar</packaging>
     <description>Zero dependency library for generating a Mastercard API compliant OAuth signature</description>
     <url>https://github.com/Mastercard/oauth1-signer-java</url>
@@ -41,17 +41,6 @@
             <url>https://opensource.org/licenses/MIT</url>
         </license>
     </licenses>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh - snapshot</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
     <dependencies>
         <dependency>
@@ -231,6 +220,15 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.7.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                </configuration>
             </plugin>
         </plugins>
     </build>
