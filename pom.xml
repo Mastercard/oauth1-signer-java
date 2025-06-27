@@ -14,6 +14,7 @@
 
     <properties>
         <spring-version>5.3.33</spring-version>
+        <spring-webflux-version>3.5.3</spring-webflux-version>
         <okhttp2-version>2.7.5</okhttp2-version>
         <okhttp3-version>4.12.0</okhttp3-version>
         <google-api-client-version>2.3.0</google-api-client-version>
@@ -82,6 +83,13 @@
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-core</artifactId>
             <version>${feign-version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+            <version>${spring-webflux-version}</version>
             <scope>provided</scope>
         </dependency>
 

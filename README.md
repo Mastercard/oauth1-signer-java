@@ -96,6 +96,7 @@ Usage briefly described below, but you can also refer to the test package for ex
 + [Java HttpsURLConnection](#java-httpsurlconnection)
 + [Apache HTTP Client 4](#apache-http-client-4)
 + [OkHttp 3](#okhttp-3)
++ [Spring Webflux](#spring-webflux)
 
 #### Java HttpsURLConnection <a name="java-httpsurlconnection"></a>
 ```java
@@ -138,6 +139,19 @@ OkHttpSigner signer = new OkHttpSigner(consumerKey, signingKey);
 signer.sign(request);
 ```
 
+#### Spring Webflux <a name="spring-webflux"></a>
+```java
+WebClient client = WebClient.create();
+ClientRequest request = ClientRequest.create(HttpMethod.POST, URI.create("https://api.mastercard.com/service"))
+        .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+        .body(BodyInserters.fromValue(yourRequestObject))
+        .build();
+
+SpringWebfluxSigner signer = new SpringWebfluxSigner(consumerKey, signingKey);
+ClientRequest signedRequest = signer.sign(request);
+client.exchange(signedRequest);
+```
+
 ### Integrating with OpenAPI Generator API Client Libraries <a name="integrating-with-openapi-generator-api-client-libraries"></a>
 
 [OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator) generates API client libraries from [OpenAPI Specs](https://github.com/OAI/OpenAPI-Specification). 
@@ -151,6 +165,7 @@ Library options currently supported for the `java` generator:
 + [retrofit](#retrofit)
 + [retrofit2](#retrofit2)
 + [google-api-client](#google-api-client)
++ [spring-webflux](#spring-webflux-interceptor)
 
 See also:
 * [OpenAPI Generator (maven Plugin)](https://mvnrepository.com/artifact/org.openapitools/openapi-generator-maven-plugin)
@@ -281,6 +296,28 @@ HttpRequestInitializer initializer = new HttpRequestInitializer() {
     }
 };
 ApiClient client = new ApiClient("https://sandbox.api.mastercard.com", null, initializer, null);
+ServiceApi serviceApi = client.serviceApi();
+// ...
+```
+
+#### spring-webflux <a name="spring-webflux-interceptor"></a>
+##### OpenAPI Generator Plugin Configuration
+```xml
+<configuration>
+    <inputSpec>${project.basedir}/src/main/resources/openapi-spec.yaml</inputSpec>
+    <generatorName>spring</generatorName>
+    <library>spring-cloud</library>
+    <!-- ... -->
+</configuration>
+```
+
+##### Usage of the `HttpExecuteOAuth1Interceptor`
+```java
+WebClient.Builder webClientBuilder = WebClient.builder()
+  .baseUrl("https://api.mastercard.com/service")
+  .filter(new SpringWebfluxOAuth1Interceptor(consumerKey, signingKey));
+
+ApiClient apiClient = new ApiClient(webClientBuilder);
 ServiceApi serviceApi = client.serviceApi();
 // ...
 ```
