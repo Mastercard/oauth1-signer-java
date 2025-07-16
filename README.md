@@ -25,7 +25,8 @@
 Zero dependency library for generating a Mastercard API compliant OAuth signature.
 
 ### Compatibility <a name="compatibility"></a>
-Java 11+
+Java 11+ till version 1.5.3 included.
+Java 17+ from 1.5.4
 
 ### References <a name="references"></a>
 * [OAuth 1.0a specification](https://tools.ietf.org/html/rfc5849)
