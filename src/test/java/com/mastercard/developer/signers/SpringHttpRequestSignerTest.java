@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.security.PrivateKey;
+import java.util.Map;
 
 public class SpringHttpRequestSignerTest {
 	
@@ -38,7 +39,6 @@ public class SpringHttpRequestSignerTest {
 			public HttpMethod getMethod(){
 				return POST_METHOD;
 			}
-			@Override
 			public String getMethodValue(){
 				return getMethod().toString();
 			}
@@ -46,6 +46,12 @@ public class SpringHttpRequestSignerTest {
 			public URI getURI(){
 				return uri;
 			}
+
+			@Override
+			public Map<String, Object> getAttributes() {
+				return Map.of();
+			}
+
 			@Override
 			public HttpHeaders getHeaders(){
 				return headers;
@@ -104,7 +110,6 @@ public class SpringHttpRequestSignerTest {
 			public HttpMethod getMethod(){
 				return GET_METHOD;
 			}
-			@Override
 			public String getMethodValue(){
 				return getMethod().toString();
 			}
@@ -112,6 +117,12 @@ public class SpringHttpRequestSignerTest {
 			public URI getURI(){
 				return uri;
 			}
+
+			@Override
+			public Map<String, Object> getAttributes() {
+				return Map.of();
+			}
+
 			@Override
 			public HttpHeaders getHeaders(){
 				return headers;
@@ -136,7 +147,6 @@ public class SpringHttpRequestSignerTest {
 			public HttpMethod getMethod(){
 				return GET_METHOD;
 			}
-			@Override
 			public String getMethodValue(){
 				return getMethod().toString();
 			}
@@ -144,6 +154,12 @@ public class SpringHttpRequestSignerTest {
 			public URI getURI(){
 				return uri;
 			}
+
+			@Override
+			public Map<String, Object> getAttributes() {
+				return Map.of();
+			}
+
 			@Override
 			public HttpHeaders getHeaders(){
 				return headers;
@@ -165,10 +181,14 @@ public class SpringHttpRequestSignerTest {
 		// GIVEN
 		request = new HttpRequest() {
 			@Override
+			public Map<String, Object> getAttributes() {
+				return Map.of();
+			}
+
+			@Override
 			public HttpMethod getMethod(){
 				return null;
 			}
-			@Override
 			public String getMethodValue(){
 				return "something";
 			}
