@@ -13,7 +13,7 @@
     <name>oauth1-signer</name>
 
     <properties>
-        <spring-version>5.3.33</spring-version>
+        <spring-version>6.2.8</spring-version>
         <spring-webflux-version>3.5.3</spring-webflux-version>
         <okhttp2-version>2.7.5</okhttp2-version>
         <okhttp3-version>4.12.0</okhttp3-version>
@@ -222,6 +222,14 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>9</source>
+                    <target>9</target>
                 </configuration>
             </plugin>
         </plugins>
