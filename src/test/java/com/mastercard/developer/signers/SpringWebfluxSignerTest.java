@@ -24,10 +24,8 @@ public class SpringWebfluxSignerTest {
         // GIVEN
         PrivateKey signingKey = getTestSigningKey();
         String consumerKey = "Some key";
-        MediaType jsonMediaType = MediaType.parse("application/json; charset=" + UTF8_CHARSET.name());
-        RequestBody body = RequestBody.create(jsonMediaType, "{\"foo\":\"bår\"}");
-        BodyInserter<RequestBody, ReactiveHttpOutputMessage> inserter = BodyInserters.fromValue(body);
-        ClientRequest request = ClientRequest.create(HttpMethod.GET, URI.create("https://api.mastercard.com/service")).body(inserter).build();
+        BodyInserterWrapper bodyWrapper = new BodyInserterWrapper("{\"foo\":\"bår\"}");
+        ClientRequest request = ClientRequest.create(HttpMethod.GET, URI.create("https://api.mastercard.com/service")).body(bodyWrapper).build();
 
         // WHEN
         SpringWebfluxSigner instanceUnderTest = new SpringWebfluxSigner(consumerKey, signingKey);
