@@ -145,7 +145,7 @@ signer.sign(request);
 WebClient client = WebClient.create();
 ClientRequest request = ClientRequest.create(HttpMethod.POST, URI.create("https://api.mastercard.com/service"))
         .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-        .body(BodyInserters.fromValue(yourRequestObject))
+        .body(BodyInserters.fromValue(new BodyInserterWrapper(yourRequestObject)))
         .build();
 
 SpringWebfluxSigner signer = new SpringWebfluxSigner(consumerKey, signingKey);
