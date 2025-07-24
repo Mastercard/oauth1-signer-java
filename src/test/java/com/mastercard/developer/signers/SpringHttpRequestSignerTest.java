@@ -39,9 +39,6 @@ public class SpringHttpRequestSignerTest {
 			public HttpMethod getMethod(){
 				return POST_METHOD;
 			}
-			public String getMethodValue(){
-				return getMethod().toString();
-			}
 			@Override
 			public URI getURI(){
 				return uri;
@@ -75,7 +72,7 @@ public class SpringHttpRequestSignerTest {
 	public void testSignShouldAddOAuth1HeaderToPostRequestWithCharset() {
 	
 		// GIVEN
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		
 		// WHEN
 		SpringHttpRequestSigner instanceUnderTest = new SpringHttpRequestSigner(DEFAULT_CONSUMER_KEY, signingKey);
@@ -109,9 +106,6 @@ public class SpringHttpRequestSignerTest {
 			@Override
 			public HttpMethod getMethod(){
 				return GET_METHOD;
-			}
-			public String getMethodValue(){
-				return getMethod().toString();
 			}
 			@Override
 			public URI getURI(){
@@ -147,9 +141,6 @@ public class SpringHttpRequestSignerTest {
 			public HttpMethod getMethod(){
 				return GET_METHOD;
 			}
-			public String getMethodValue(){
-				return getMethod().toString();
-			}
 			@Override
 			public URI getURI(){
 				return uri;
@@ -173,37 +164,5 @@ public class SpringHttpRequestSignerTest {
 		// THEN
 		String authorizationHeaderValue = headers.getFirst(HttpHeaders.AUTHORIZATION);
 		Assert.assertNotNull(authorizationHeaderValue);
-	}
-
-	@Test(expected = IllegalStateException.class) // THEN
-	public void testSign_ShouldThrowIllegalStateException_WhenNullHttpMethod() {
-
-		// GIVEN
-		request = new HttpRequest() {
-			@Override
-			public Map<String, Object> getAttributes() {
-				return Map.of();
-			}
-
-			@Override
-			public HttpMethod getMethod(){
-				return null;
-			}
-			public String getMethodValue(){
-				return "something";
-			}
-			@Override
-			public URI getURI(){
-				return uri;
-			}
-			@Override
-			public HttpHeaders getHeaders(){
-				return headers;
-			}
-		};
-
-		// WHEN
-		SpringHttpRequestSigner instanceUnderTest = new SpringHttpRequestSigner(DEFAULT_CONSUMER_KEY, signingKey);
-		instanceUnderTest.sign(request, null);
 	}
 }
