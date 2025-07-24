@@ -21,9 +21,6 @@ public class SpringHttpRequestSigner extends AbstractSigner {
     
     public void sign(HttpRequest request, byte[] bytes) {
         HttpMethod method = request.getMethod();
-        if (method == null) {
-            throw new IllegalStateException("Can't sign a request with a null HTTP method!");
-        }
         HttpHeaders headers = request.getHeaders();
         Charset charset = getCharset(headers);
         String payload = (null == bytes ? null : new String(bytes, charset));
