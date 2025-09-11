@@ -62,7 +62,7 @@ dependencies {
 ```
 
 #### Other Dependency Managers
-See: https://search.maven.org/artifact/com.mastercard.developer/oauth1-signer
+See: https://central.sonatype.com/artifact/com.mastercard.developer/oauth1-signer?smo=true
 
 ### Loading the Signing Key <a name="loading-the-signing-key"></a>
 
