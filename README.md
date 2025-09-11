@@ -4,7 +4,7 @@
 [![](https://github.com/Mastercard/oauth1-signer-java/workflows/Build%20&%20Test/badge.svg)](https://github.com/Mastercard/oauth1-signer-java/actions?query=workflow%3A%22Build+%26+Test%22)
 [![](https://sonarcloud.io/api/project_badges/measure?project=Mastercard_oauth1-signer-java&metric=alert_status)](https://sonarcloud.io/dashboard?id=Mastercard_oauth1-signer-java)
 [![](https://github.com/Mastercard/oauth1-signer-java/workflows/broken%20links%3F/badge.svg)](https://github.com/Mastercard/oauth1-signer-java/actions?query=workflow%3A%22broken+links%3F%22)
-[![](https://img.shields.io/maven-central/v/com.mastercard.developer/oauth1-signer.svg)](https://search.maven.org/artifact/com.mastercard.developer/oauth1-signer/)
+[![](https://img.shields.io/maven-central/v/com.mastercard.developer/oauth1-signer.svg)](https://central.sonatype.com/artifact/com.mastercard.developer/oauth1-signer?smo=true)
 [![](https://www.javadoc.io/badge/com.mastercard.developer/oauth1-signer.svg?color=blue)](https://www.javadoc.io/doc/com.mastercard.developer/oauth1-signer)
 [![](https://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/Mastercard/oauth1-signer-java/blob/master/LICENSE)
 
@@ -62,7 +62,7 @@ dependencies {
 ```
 
 #### Other Dependency Managers
-See: https://search.maven.org/artifact/com.mastercard.developer/oauth1-signer
+See: https://central.sonatype.com/artifact/com.mastercard.developer/oauth1-signer?smo=true
 
 ### Loading the Signing Key <a name="loading-the-signing-key"></a>
 
