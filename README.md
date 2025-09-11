@@ -321,4 +321,4 @@ WebClient.Builder webClientBuilder = WebClient.builder()
 ApiClient apiClient = new ApiClient(webClientBuilder);
 ServiceApi serviceApi = client.serviceApi();
 // ...
-``` 
+```
