@@ -68,7 +68,7 @@ RUN mkdir -p /root/.m2 && \
   \
           <activeProfile>mastercard-base</activeProfile> \
           </activeProfiles> \
-</settings>" > /root/.m2/settings.xml \
+</settings>" > /root/.m2/settings.xml
 
 # Set working directory
 WORKDIR /app
