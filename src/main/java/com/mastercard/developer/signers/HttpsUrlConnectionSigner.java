@@ -10,7 +10,7 @@ import javax.net.ssl.HttpsURLConnection;
 /**
  * Utility class for signing Java HttpsURLConnection requests.
  */
-public class HttpsUrlConnectionSigner extends AbstractSigner {
+public final class HttpsUrlConnectionSigner extends AbstractSigner {
 
   public HttpsUrlConnectionSigner(Charset charset, String consumerKey, PrivateKey signingKey) {
     super(charset, consumerKey, signingKey);

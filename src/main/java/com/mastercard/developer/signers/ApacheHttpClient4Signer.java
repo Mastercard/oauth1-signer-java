@@ -13,7 +13,7 @@ import org.apache.http.util.EntityUtils;
 /**
  * Utility class for signing Apache HTTP Client 4 requests.
  */
-public class ApacheHttpClient4Signer extends AbstractSigner {
+public final class ApacheHttpClient4Signer extends AbstractSigner {
 
   public ApacheHttpClient4Signer(String consumerKey, PrivateKey signingKey) {
     super(consumerKey, signingKey);
