@@ -110,7 +110,7 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>2.9.1</version> <!-- We can't bump this one because of the Java 7 support -->
+            <version>3.27.7</version> <!-- We can't bump this one because of the Java 7 support -->
             <scope>test</scope>
         </dependency>
     </dependencies>
