@@ -90,6 +90,26 @@ Charset charset = StandardCharsets.UTF_8;
 String authHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey);
 ```
 
+#### RSA-PSS support
+
+This library signs requests using OAuth 1.0a with an RSA + SHA-256 digest.
+
+* When the runtime/provider supports the JCA algorithm `SHA256withRSA`, the library uses it (RSA PKCS#1 v1.5).
+  In this case, the Authorization header contains `oauth_signature_method="RSA-SHA256"`.
+* If `SHA256withRSA` is not usable and RSA-PSS is, the library falls back to the JCA algorithm `RSASSA-PSS` using
+  `SHA-256 / MGF1(SHA-256) / saltLen=32 / trailerField=1`.
+  In this case, the Authorization header contains `oauth_signature_method="RSA-PSS"`.
+
+Notes:
+* The RSA signature scheme (PKCS#1 v1.5 vs PSS) cannot be inferred from an RSA `PrivateKey`.
+  The selection is based on provider capabilities.
+* If you want to know which JCA algorithm will be used on the current runtime/provider, you can call:
+
+```java
+String alg = OAuth.signSignatureBaseStringAlgName("baseString", signingKey, StandardCharsets.UTF_8);
+System.out.println(alg); // "SHA256withRSA" or "RSASSA-PSS"
+```
+
 ### Signing HTTP Client Request Objects <a name="signing-http-client-request-objects"></a>
 
 Alternatively, you can use helper classes for some of the commonly used HTTP clients.
