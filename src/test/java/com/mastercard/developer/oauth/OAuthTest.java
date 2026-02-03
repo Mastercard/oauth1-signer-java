@@ -295,7 +295,7 @@ public class OAuthTest {
     assertEquals(expectedSignatureString, OAuth.signSignatureBaseString("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8));
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void testSignSignatureBaseString_ShouldThrowIllegalStateException_WhenInvalidKey() {
     OAuth.signSignatureBaseString("some string", null, StandardCharsets.UTF_8);
   }
@@ -357,5 +357,15 @@ public class OAuthTest {
     if (dupes.size() != randomNonces) {
       fail("Expected " + randomNonces + " but got " + dupes.size());
     }
+  }
+
+  @Test
+  public void testSignSignatureBaseStringWithAlg_ShouldReturnAlg() throws Exception {
+    String signature = OAuth.signSignatureBaseString("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8);
+    assertEquals("IJeNKYGfUhFtj5OAPRI92uwfjJJLCej3RCMLbp7R6OIYJhtwxnTkloHQ2bgV7fks4GT/A7rkqrgUGk0ewbwIC6nS3piJHyKVc7rvQXZuCQeeeQpFzLRiH3rsb+ZS+AULK+jzDje4Fb+BQR6XmxuuJmY6YrAKkj13Ln4K6bZJlSxOizbNvt+Htnx+hNd4VgaVBeJKcLhHfZbWQxK76nMnjY7nDcM/2R6LUIR2oLG1L9m55WP3bakAvmOr392ulv1+mWCwDAZZzQ4lakDD2BTu0ZaVsvBW+mcKFxYeTq7SyTQMM4lEwFPJ6RLc8jJJ+veJXHekLVzWg4qHRtzNBLz1mA==",
+        signature);
+
+    String algName = OAuth.signSignatureBaseStringAlgName("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8);
+    assertEquals("SHA256withRSA", algName);
   }
 }
