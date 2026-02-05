@@ -308,7 +308,7 @@ public class OAuth {
     }
 
     // If we can create the PKCS#1 signer, we will use it.
-    if (createSigner(SHA_256_WITH_RSA, false).isPresent()) {
+    if (!FORCE_PSS_ALG_PROBE_FOR_TESTS && createSigner(SHA_256_WITH_RSA, false).isPresent()) {
       return SHA_256_WITH_RSA;
     }
 
@@ -316,6 +316,14 @@ public class OAuth {
     doSignWithPssFallback(sbs, signingKey, charset);
     return RSASSA_PSS;
   }
+
+  /**
+   * Test-only seam to force the RSA-PSS branch in unit tests.
+   *
+   * <p>When set to {@code true}, {@link #signSignatureBaseStringAlgName(String, PrivateKey, Charset)} behaves as if
+   * {@code SHA256withRSA} was unavailable and validates RSA-PSS viability instead.
+   */
+  static volatile boolean FORCE_PSS_ALG_PROBE_FOR_TESTS = false;
 
   static java.util.Optional<Signature> createSigner(String algorithm, boolean configurePss) {
     try {

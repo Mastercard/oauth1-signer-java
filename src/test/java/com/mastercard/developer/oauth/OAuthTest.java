@@ -550,4 +550,85 @@ public class OAuthTest {
     String sig3 = OAuth.doSign("test", key, StandardCharsets.UTF_8, pssSigner);
     // Note: PSS signatures are non-deterministic, so sig2 != sig3 typically
   }
+
+  @Test
+  public void testGetAuthorizationHeader_ShouldThrowIllegalArgumentException_WhenRequiredParamsNull() throws Exception {
+    URI uri = URI.create("https://sandbox.api.mastercard.com/service");
+    PrivateKey key = TestUtils.getTestSigningKey();
+
+    try {
+      OAuth.getAuthorizationHeader(null, "POST", "payload", StandardCharsets.UTF_8, "ck", key);
+      fail("Expected IllegalArgumentException");
+    } catch (IllegalArgumentException e) {
+      assertTrue(e.getMessage().contains("Required parameters"));
+    }
+
+    try {
+      OAuth.getAuthorizationHeader(uri, null, "payload", StandardCharsets.UTF_8, "ck", key);
+      fail("Expected IllegalArgumentException");
+    } catch (IllegalArgumentException e) {
+      assertTrue(e.getMessage().contains("Required parameters"));
+    }
+
+    try {
+      OAuth.getAuthorizationHeader(uri, "POST", "payload", null, "ck", key);
+      fail("Expected IllegalArgumentException");
+    } catch (IllegalArgumentException e) {
+      assertTrue(e.getMessage().contains("Required parameters"));
+    }
+
+    try {
+      OAuth.getAuthorizationHeader(uri, "POST", "payload", StandardCharsets.UTF_8, null, key);
+      fail("Expected IllegalArgumentException");
+    } catch (IllegalArgumentException e) {
+      assertTrue(e.getMessage().contains("Required parameters"));
+    }
+
+    try {
+      OAuth.getAuthorizationHeader(uri, "POST", "payload", StandardCharsets.UTF_8, "ck", null);
+      fail("Expected IllegalArgumentException");
+    } catch (IllegalArgumentException e) {
+      assertTrue(e.getMessage().contains("Required parameters"));
+    }
+  }
+
+  @Test
+  public void testGetAuthorizationHeader_ShouldReturnOAuthHeader_WhenNominal() throws Exception {
+    URI uri = URI.create("https://sandbox.api.mastercard.com/service?param=value");
+    Charset charset = StandardCharsets.UTF_8;
+    String consumerKey = "test-consumer-key";
+    PrivateKey key = TestUtils.getTestSigningKey();
+
+    String payload = "Hello world!";
+    String authHeader = OAuth.getAuthorizationHeader(uri, "POST", payload, charset, consumerKey, key);
+
+    assertNotNull(authHeader);
+    assertTrue(authHeader.startsWith("OAuth "));
+
+    // Contains required/oauth fields
+    assertTrue(authHeader.contains("oauth_consumer_key=\"" + consumerKey + "\""));
+    assertTrue(authHeader.contains("oauth_nonce=\""));
+    assertTrue(authHeader.contains("oauth_timestamp=\""));
+    assertTrue(authHeader.contains("oauth_version=\"1.0\""));
+
+    // Signature method & signature
+    assertTrue(authHeader.contains("oauth_signature_method=\"RSA-SHA256\""));
+    assertTrue(authHeader.contains("oauth_signature=\""));
+
+    // Body hash should match what getBodyHash computes
+    String expectedBodyHash = OAuth.getBodyHash(payload, charset, HASH_ALGORITHM);
+    assertTrue(authHeader.contains("oauth_body_hash=\"" + expectedBodyHash + "\""));
+  }
+
+  @Test
+  public void testSignSignatureBaseStringAlgName_ShouldReturnRsassaPss_WhenForcedForTests() throws Exception {
+    boolean previous = OAuth.FORCE_PSS_ALG_PROBE_FOR_TESTS;
+    OAuth.FORCE_PSS_ALG_PROBE_FOR_TESTS = true;
+    try {
+      String algName = OAuth.signSignatureBaseStringAlgName("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8);
+      assertEquals("RSASSA-PSS", algName);
+    } finally {
+      OAuth.FORCE_PSS_ALG_PROBE_FOR_TESTS = previous;
+    }
+  }
 }
