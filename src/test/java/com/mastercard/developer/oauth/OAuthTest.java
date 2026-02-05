@@ -447,6 +447,30 @@ public class OAuthTest {
   }
 
   @Test
+  public void testDoSignUnchecked_ShouldThrowIllegalStateException_WhenSignerFails_AndAlgNotSha256WithRsa() throws Exception {
+    // Force the try-block to throw by using a Signature that isn't initialised for signing.
+    Signature badSigner = Signature.getInstance("SHA256withRSA");
+
+    try {
+      OAuth.doSignUnchecked("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8, badSigner, "RSASSA-PSS");
+      fail("Expected IllegalStateException");
+    } catch (IllegalStateException e) {
+      assertTrue(e.getCause() instanceof GeneralSecurityException);
+      assertTrue(e.getMessage().contains("Unable to sign OAuth signature base string"));
+    }
+  }
+
+  @Test
+  public void testDoSignUnchecked_ShouldFallbackToPss_WhenSignerFails_AndAlgIsSha256WithRsa() throws Exception {
+    // Force the try-block to throw by using a Signature that isn't initialised for signing.
+    Signature badSigner = Signature.getInstance("SHA256withRSA");
+
+    String signature = OAuth.doSignUnchecked("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8, badSigner, "SHA256withRSA");
+    assertNotNull(signature);
+    assertFalse(signature.isEmpty());
+  }
+
+  @Test
   public void testSignSignatureBaseString_WithDifferentCharsets() throws Exception {
     PrivateKey key = TestUtils.getTestSigningKey();
 
