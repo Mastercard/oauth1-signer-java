@@ -16,4 +16,7 @@ public class TestUtils {
     public static PrivateKey getTestSigningKey() throws Exception {
         return loadSigningKey("./src/test/resources/test_key_container.p12", "mykeyalias", "Password1");
     }
+    public static PrivateKey getTestSigningKeyRSAPPSS() throws Exception {
+        return loadSigningKey("./src/test/resources/test_key_rsapss.p12", "RSASSA-PSS Cert", "password1");
+    }
 }

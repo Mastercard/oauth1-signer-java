@@ -452,7 +452,7 @@ public class OAuthTest {
     Signature badSigner = Signature.getInstance("SHA256withRSA");
 
     try {
-      OAuth.doSignUnchecked("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8, badSigner, "RSASSA-PSS");
+      OAuth.doSignUnchecked("baseString", TestUtils.getTestSigningKeyRSAPPSS(), StandardCharsets.UTF_8, badSigner, "RSASSA-PSS");
       fail("Expected IllegalStateException");
     } catch (IllegalStateException e) {
       assertTrue(e.getCause() instanceof GeneralSecurityException);
