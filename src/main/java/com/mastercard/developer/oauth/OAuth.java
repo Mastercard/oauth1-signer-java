@@ -317,7 +317,7 @@ public class OAuth {
     return RSASSA_PSS;
   }
 
-  private static java.util.Optional<Signature> createSigner(String algorithm, boolean configurePss) {
+  static java.util.Optional<Signature> createSigner(String algorithm, boolean configurePss) {
     try {
       Signature signer = Signature.getInstance(algorithm);
       if (configurePss) {
@@ -334,7 +334,7 @@ public class OAuth {
     }
   }
 
-  private static String doSignWithPssFallback(String sbs, PrivateKey signingKey, Charset charset) {
+  static String doSignWithPssFallback(String sbs, PrivateKey signingKey, Charset charset) {
     if (signingKey == null) {
       throw new IllegalArgumentException("signingKey must not be null");
     }
@@ -353,7 +353,7 @@ public class OAuth {
     }
   }
 
-  private static String doSignUnchecked(String sbs, PrivateKey signingKey, Charset charset, Signature signer, String alg) {
+  static String doSignUnchecked(String sbs, PrivateKey signingKey, Charset charset, Signature signer, String alg) {
     if (signingKey == null) {
       throw new IllegalArgumentException("signingKey must not be null");
     }
@@ -369,7 +369,7 @@ public class OAuth {
     }
   }
 
-  private static String doSign(String sbs, PrivateKey signingKey, Charset charset, Signature signer) throws GeneralSecurityException {
+  static String doSign(String sbs, PrivateKey signingKey, Charset charset, Signature signer) throws GeneralSecurityException {
     signer.initSign(signingKey);
     signer.update(sbs.getBytes(charset));
     return Util.b64Encode(signer.sign());
