@@ -216,6 +216,25 @@ public class OAuthTest {
   }
 
   @Test
+  public void testShallThrowErrorIfSchemaIsNull() {
+    URI uri = URI.create("www.example.net:8080");
+    try {
+      String baseUri = OAuth.getBaseUriString(uri);
+    } catch (IllegalArgumentException e) {
+      assertEquals("URI must have both scheme and authority", e.getMessage());
+    }
+  }
+
+  @Test
+  public void testShallThrowErrorIfAuthorityIsNull() {
+    URI uri = URI.create("/service?foo=bar");
+    try {
+      String baseUri = OAuth.getBaseUriString(uri);
+    } catch (IllegalArgumentException e) {
+      assertEquals("URI must have both scheme and authority", e.getMessage());
+    }
+  }
+  @Test
   public void testGetBaseUriString_ShouldRemoveRedundantPorts() {
     URI uri = URI.create("https://api.mastercard.com:443/test?query=param");
     String baseUri = OAuth.getBaseUriString(uri);
