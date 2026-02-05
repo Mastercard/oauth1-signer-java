@@ -375,7 +375,7 @@ public class OAuthTest {
 
     Signature signer = signerOpt.get();
     // Verify it's configured by attempting to sign
-    signer.initSign(TestUtils.getTestSigningKey());
+    signer.initSign(TestUtils.getTestSigningKeyRSAPPSS());
     signer.update("test".getBytes(StandardCharsets.UTF_8));
     byte[] signature = signer.sign();
     assertNotNull("Signature should be generated", signature);
@@ -384,7 +384,7 @@ public class OAuthTest {
 
   @Test
   public void testDoSignWithPssFallback_ShouldSign_WithValidKey() throws Exception {
-    String signature = OAuth.doSignWithPssFallback("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8);
+    String signature = OAuth.doSignWithPssFallback("baseString", TestUtils.getTestSigningKeyRSAPPSS(), StandardCharsets.UTF_8);
     assertNotNull("Signature should not be null", signature);
     assertFalse("Signature should not be empty", signature.isEmpty());
     assertTrue("Signature should be base64 encoded", signature.length() > 100);
