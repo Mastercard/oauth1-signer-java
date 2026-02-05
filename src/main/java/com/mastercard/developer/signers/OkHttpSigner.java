@@ -14,7 +14,7 @@ import okio.Buffer;
 /**
  * Utility class for signing Java OkHttp3 requests.
  */
-public class OkHttpSigner extends AbstractSigner {
+public final class OkHttpSigner extends AbstractSigner {
 
   public OkHttpSigner(String consumerKey, PrivateKey signingKey) {
     super(StandardCharsets.UTF_8, consumerKey, signingKey);
