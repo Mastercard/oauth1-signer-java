@@ -352,7 +352,7 @@ public class OAuth {
       return doSign(sbs, signingKey, charset, signer);
     } catch (GeneralSecurityException e) {
       // If init/sign fails (bad key/provider), attempt PSS as a last resort.
-      if (!SHA_256_WITH_RSA.equals(alg)) {
+      if (!RSASSA_PSS.equals(alg)) {
         throw new IllegalStateException("Unable to sign OAuth signature base string", e);
       }
       return doSignWithPssFallback(sbs, signingKey, charset);
