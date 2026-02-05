@@ -32,6 +32,7 @@ public class OAuth {
   private static final String HASH_ALGORITHM = "SHA-256";
   private static final int NONCE_LENGTH = 16;
   private static final String ALPHA_NUMERIC_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
   private OAuth() {
   }
@@ -48,6 +49,10 @@ public class OAuth {
    * @return Valid OAuth1.0a signature with a body hash when payload is present
    */
   public static String getAuthorizationHeader(URI uri, String method, String payload, Charset charset, String consumerKey, PrivateKey signingKey) {
+    if (uri == null || method == null || charset == null || consumerKey == null || signingKey == null) {
+      throw new IllegalArgumentException("Required parameters (uri, method, charset, consumerKey, signingKey) must not be null");
+    }
+
     TreeMap<String, List<String>> queryParams = extractQueryParams(uri, charset);
 
     HashMap<String, String> oauthParams = new HashMap<>();
@@ -171,9 +176,8 @@ public class OAuth {
     }
 
     // Remove trailing ampersand
-    int stringLength = oauthParams.length() - 1;
-    if (oauthParams.charAt(stringLength) == '&') {
-      oauthParams.deleteCharAt(stringLength);
+    if (oauthParams.length() > 0 && oauthParams.charAt(oauthParams.length() - 1) == '&') {
+      oauthParams.deleteCharAt(oauthParams.length() - 1);
     }
 
     return oauthParams.toString();
@@ -186,10 +190,9 @@ public class OAuth {
    * @return random string of 16 characters.
    */
   static String getNonce() {
-    SecureRandom rnd = new SecureRandom();
     StringBuilder sb = new StringBuilder(NONCE_LENGTH);
     for (int i = 0; i < NONCE_LENGTH; i++) {
-      sb.append(ALPHA_NUMERIC_CHARS.charAt(rnd.nextInt(ALPHA_NUMERIC_CHARS.length())));
+      sb.append(ALPHA_NUMERIC_CHARS.charAt(SECURE_RANDOM.nextInt(ALPHA_NUMERIC_CHARS.length())));
     }
     return sb.toString();
   }
@@ -213,8 +216,15 @@ public class OAuth {
    */
   static String getBaseUriString(URI uri) {
     // Lowercase scheme and authority
-    String scheme = uri.getScheme().toLowerCase();
-    String authority = uri.getAuthority().toLowerCase();
+    String scheme = uri.getScheme();
+    String authority = uri.getAuthority();
+
+    if (scheme == null || authority == null) {
+      throw new IllegalArgumentException("URI must have both scheme and authority");
+    }
+
+    scheme = scheme.toLowerCase();
+    authority = authority.toLowerCase();
 
     // Remove port if it matches the default for scheme
     if (("http".equals(scheme) && uri.getPort() == 80)
@@ -252,7 +262,7 @@ public class OAuth {
 
     digest.reset();
     // "If the request does not have an entity body, the hash should be taken over the empty string"
-    byte[] byteArray = null == payload ? "".getBytes() : payload.getBytes(charset);
+    byte[] byteArray = (payload == null) ? "".getBytes(charset) : payload.getBytes(charset);
     byte[] hash = digest.digest(byteArray);
 
     return Util.b64Encode(hash);
@@ -351,8 +361,8 @@ public class OAuth {
     try {
       return doSign(sbs, signingKey, charset, signer);
     } catch (GeneralSecurityException e) {
-      // If init/sign fails (bad key/provider), attempt PSS as a last resort.
-      if (!RSASSA_PSS.equals(alg)) {
+      // If init/sign fails with SHA256withRSA (bad key/provider), attempt PSS as a last resort.
+      if (!SHA_256_WITH_RSA.equals(alg)) {
         throw new IllegalStateException("Unable to sign OAuth signature base string", e);
       }
       return doSignWithPssFallback(sbs, signingKey, charset);
