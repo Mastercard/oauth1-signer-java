@@ -295,8 +295,40 @@ public class OAuthTest {
     assertEquals(expectedSignatureString, OAuth.signSignatureBaseString("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8));
   }
 
+  @Test
+  public void testSignSignatureBaseStringAlgName_ShouldReturnSha256withRsa_WhenAvailable() throws Exception {
+    String algName = OAuth.signSignatureBaseStringAlgName("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8);
+    assertEquals("SHA256withRSA", algName);
+  }
+
+  @Test
+  public void testSignSignatureBaseStringAlgName_ShouldThrowIllegalArgumentException_WhenKeyIsNull() {
+    try {
+      OAuth.signSignatureBaseStringAlgName("baseString", null, StandardCharsets.UTF_8);
+      fail("Expected IllegalArgumentException");
+    } catch (IllegalArgumentException e) {
+      assertEquals("signingKey must not be null", e.getMessage());
+    }
+  }
+
+  @Test
+  public void testSignSignatureBaseString_ShouldSupportPssFallbackHelper() throws Exception {
+    // We can't reliably force the JCA provider to not support SHA256withRSA in unit tests.
+    // Instead, we invoke the PSS signing helper directly by reflection to ensure it works and stays covered.
+    java.lang.reflect.Method m = OAuth.class.getDeclaredMethod(
+        "doSignWithPssFallback",
+        String.class,
+        java.security.PrivateKey.class,
+        java.nio.charset.Charset.class);
+    m.setAccessible(true);
+
+    String signature = (String) m.invoke(null, "baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8);
+    assertNotNull(signature);
+    assertFalse(signature.isEmpty());
+  }
+
   @Test(expected = IllegalArgumentException.class)
-  public void testSignSignatureBaseString_ShouldThrowIllegalStateException_WhenInvalidKey() {
+  public void testSignSignatureBaseString_ShouldThrowIllegalArgumentException_WhenKeyIsNull() {
     OAuth.signSignatureBaseString("some string", null, StandardCharsets.UTF_8);
   }
 
