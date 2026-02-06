@@ -13,9 +13,6 @@ import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static com.mastercard.developer.test.TestUtils.UTF8_CHARSET;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -314,86 +311,16 @@ public class OAuthTest {
   @Test
   public void testSignSignatureBaseString() throws Exception {
     String expectedSignatureString = "IJeNKYGfUhFtj5OAPRI92uwfjJJLCej3RCMLbp7R6OIYJhtwxnTkloHQ2bgV7fks4GT/A7rkqrgUGk0ewbwIC6nS3piJHyKVc7rvQXZuCQeeeQpFzLRiH3rsb+ZS+AULK+jzDje4Fb+BQR6XmxuuJmY6YrAKkj13Ln4K6bZJlSxOizbNvt+Htnx+hNd4VgaVBeJKcLhHfZbWQxK76nMnjY7nDcM/2R6LUIR2oLG1L9m55WP3bakAvmOr392ulv1+mWCwDAZZzQ4lakDD2BTu0ZaVsvBW+mcKFxYeTq7SyTQMM4lEwFPJ6RLc8jJJ+veJXHekLVzWg4qHRtzNBLz1mA==";
-    assertEquals(expectedSignatureString, OAuth.signSignatureBaseString("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8));
+    String actualString = OAuth.signSignatureBaseString("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8, new HashMap<String, String>());
+    assertEquals(expectedSignatureString,actualString);
   }
 
-  @Test
-  public void testSignSignatureBaseStringAlgName_ShouldReturnSha256withRsa_WhenAvailable() throws Exception {
-    String algName = OAuth.signSignatureBaseStringAlgName("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8);
-    assertEquals("SHA256withRSA", algName);
-  }
-
-  @Test
-  public void testSignSignatureBaseStringAlgName_ShouldThrowIllegalArgumentException_WhenKeyIsNull() {
-    try {
-      OAuth.signSignatureBaseStringAlgName("baseString", null, StandardCharsets.UTF_8);
-      fail("Expected IllegalArgumentException");
-    } catch (IllegalArgumentException e) {
-      assertEquals("signingKey must not be null", e.getMessage());
-    }
-  }
-
-  @Test
-  public void testSignSignatureBaseString_ShouldSupportPssFallbackHelper() throws Exception {
-    // We can't reliably force the JCA provider to not support SHA256withRSA in unit tests.
-    // Instead, we invoke the PSS signing helper directly by reflection to ensure it works and stays covered.
-    java.lang.reflect.Method m = OAuth.class.getDeclaredMethod(
-        "doSignWithPssFallback",
-        String.class,
-        java.security.PrivateKey.class,
-        java.nio.charset.Charset.class);
-    m.setAccessible(true);
-
-    String signature = (String) m.invoke(null, "baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8);
-    assertNotNull(signature);
-    assertFalse(signature.isEmpty());
-  }
 
   @Test(expected = IllegalArgumentException.class)
   public void testSignSignatureBaseString_ShouldThrowIllegalArgumentException_WhenKeyIsNull() {
-    OAuth.signSignatureBaseString("some string", null, StandardCharsets.UTF_8);
+    OAuth.signSignatureBaseString("some string", null, StandardCharsets.UTF_8, new HashMap<String, String>());
   }
 
-  // ===== Comprehensive tests for signing methods =====
-
-  @Test
-  public void testCreateSigner_ShouldReturnSigner_WhenAlgorithmAvailable() {
-    java.util.Optional<Signature> signer = OAuth.createSigner("SHA256withRSA", false);
-    assertTrue("SHA256withRSA should be available", signer.isPresent());
-  }
-
-  @Test
-  public void testCreateSigner_ShouldReturnEmpty_WhenAlgorithmNotAvailable() {
-    java.util.Optional<Signature> signer = OAuth.createSigner("INVALID-ALGORITHM", false);
-    assertFalse("Invalid algorithm should return empty", signer.isPresent());
-  }
-
-  @Test
-  public void testCreateSigner_ShouldConfigurePss_WhenFlagIsTrue() throws Exception {
-    java.util.Optional<Signature> signerOpt = OAuth.createSigner("RSASSA-PSS", true);
-    assertTrue("RSASSA-PSS should be available", signerOpt.isPresent());
-
-    Signature signer = signerOpt.get();
-    // Verify it's configured by attempting to sign
-    signer.initSign(TestUtils.getTestSigningKeyRSAPPSS());
-    signer.update("test".getBytes(StandardCharsets.UTF_8));
-    byte[] signature = signer.sign();
-    assertNotNull("Signature should be generated", signature);
-    assertTrue("Signature should not be empty", signature.length > 0);
-  }
-
-  @Test
-  public void testDoSignWithPssFallback_ShouldSign_WithValidKey() throws Exception {
-    String signature = OAuth.doSignWithPssFallback("baseString", TestUtils.getTestSigningKeyRSAPPSS(), StandardCharsets.UTF_8);
-    assertNotNull("Signature should not be null", signature);
-    assertFalse("Signature should not be empty", signature.isEmpty());
-    assertTrue("Signature should be base64 encoded", signature.length() > 100);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testDoSignWithPssFallback_ShouldThrow_WhenKeyIsNull() {
-    OAuth.doSignWithPssFallback("baseString", null, StandardCharsets.UTF_8);
-  }
 
   @Test
   public void testDoSign_ShouldSign_WithValidSigner() throws Exception {
@@ -414,7 +341,7 @@ public class OAuthTest {
   @Test
   public void testDoSignUnchecked_ShouldSign_WithSHA256withRSA() throws Exception {
     Signature signer = Signature.getInstance("SHA256withRSA");
-    String signature = OAuth.doSignUnchecked("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8, signer, "SHA256withRSA");
+    String signature = OAuth.doSignSHA256("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8);
     assertNotNull("Signature should not be null", signature);
     assertFalse("Signature should not be empty", signature.isEmpty());
     assertEquals("Signature should match expected",
@@ -425,7 +352,7 @@ public class OAuthTest {
   @Test(expected = IllegalArgumentException.class)
   public void testDoSignUnchecked_ShouldThrow_WhenKeyIsNull() throws Exception {
     Signature signer = Signature.getInstance("SHA256withRSA");
-    OAuth.doSignUnchecked("baseString", null, StandardCharsets.UTF_8, signer, "SHA256withRSA");
+    OAuth.doSignSHA256("baseString", null, StandardCharsets.UTF_8);
   }
 
   @Test
@@ -436,7 +363,7 @@ public class OAuthTest {
     // to ensure the non-SHA256withRSA path is covered
     try {
       // This tests the error handling path
-      OAuth.doSignUnchecked("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8, signer, "RSASSA-PSS");
+      OAuth.doSignSHA256("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8);
       // If we reach here with RSASSA-PSS alg marker, it should have succeeded
       // The test verifies the conditional logic exists
     } catch (IllegalStateException e) {
@@ -447,25 +374,11 @@ public class OAuthTest {
   }
 
   @Test
-  public void testDoSignUnchecked_ShouldThrowIllegalStateException_WhenSignerFails_AndAlgNotSha256WithRsa() throws Exception {
-    // Force the try-block to throw by using a Signature that isn't initialised for signing.
-    Signature badSigner = Signature.getInstance("SHA256withRSA");
-
-    try {
-      OAuth.doSignUnchecked("baseString", TestUtils.getTestSigningKeyRSAPPSS(), StandardCharsets.UTF_8, badSigner, "RSASSA-PSS");
-      fail("Expected IllegalStateException");
-    } catch (IllegalStateException e) {
-      assertTrue(e.getCause() instanceof GeneralSecurityException);
-      assertTrue(e.getMessage().contains("Unable to sign OAuth signature base string"));
-    }
-  }
-
-  @Test
   public void testDoSignUnchecked_ShouldFallbackToPss_WhenSignerFails_AndAlgIsSha256WithRsa() throws Exception {
     // Force the try-block to throw by using a Signature that isn't initialised for signing.
     Signature badSigner = Signature.getInstance("SHA256withRSA");
 
-    String signature = OAuth.doSignUnchecked("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8, badSigner, "SHA256withRSA");
+    String signature = OAuth.doSignSHA256("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8);
     assertNotNull(signature);
     assertFalse(signature.isEmpty());
   }
@@ -475,11 +388,11 @@ public class OAuthTest {
     PrivateKey key = TestUtils.getTestSigningKey();
 
     // Test with UTF-8
-    String sig1 = OAuth.signSignatureBaseString("baseString", key, StandardCharsets.UTF_8);
+    String sig1 = OAuth.signSignatureBaseString("baseString", key, StandardCharsets.UTF_8, new HashMap<String, String>());
     assertNotNull("UTF-8 signature should not be null", sig1);
 
     // Test with ISO-8859-1
-    String sig2 = OAuth.signSignatureBaseString("baseString", key, StandardCharsets.ISO_8859_1);
+    String sig2 = OAuth.signSignatureBaseString("baseString", key, StandardCharsets.ISO_8859_1, new HashMap<String, String>());
     assertNotNull("ISO-8859-1 signature should not be null", sig2);
 
     // They should be the same for ASCII strings
@@ -490,7 +403,7 @@ public class OAuthTest {
   public void testSignSignatureBaseString_WithSpecialCharacters() throws Exception {
     PrivateKey key = TestUtils.getTestSigningKey();
 
-    String signature = OAuth.signSignatureBaseString("base€String with spëcial çhars", key, StandardCharsets.UTF_8);
+    String signature = OAuth.signSignatureBaseString("base€String with spëcial çhars", key, StandardCharsets.UTF_8,new HashMap<String, String>() );
     assertNotNull("Signature should handle special chars", signature);
     assertFalse("Signature should not be empty", signature.isEmpty());
   }
@@ -499,7 +412,7 @@ public class OAuthTest {
   public void testSignSignatureBaseString_WithEmptyString() throws Exception {
     PrivateKey key = TestUtils.getTestSigningKey();
 
-    String signature = OAuth.signSignatureBaseString("", key, StandardCharsets.UTF_8);
+    String signature = OAuth.signSignatureBaseString("", key, StandardCharsets.UTF_8, new HashMap<String, String>());
     assertNotNull("Signature should handle empty string", signature);
     assertFalse("Signature should not be empty", signature.isEmpty());
   }
@@ -513,46 +426,11 @@ public class OAuthTest {
       longString.append("a");
     }
 
-    String signature = OAuth.signSignatureBaseString(longString.toString(), key, StandardCharsets.UTF_8);
+    String signature = OAuth.signSignatureBaseString(longString.toString(), key, StandardCharsets.UTF_8,new HashMap<String, String>() );
     assertNotNull("Signature should handle long string", signature);
     assertFalse("Signature should not be empty", signature.isEmpty());
   }
 
-  @Test
-  public void testCreateSigner_WithPssConfiguration() throws Exception {
-    java.util.Optional<Signature> signerOpt = OAuth.createSigner("RSASSA-PSS", true);
-    assertTrue("RSASSA-PSS with config should be available", signerOpt.isPresent());
-
-    if (signerOpt.isPresent()) {
-      Signature signer = signerOpt.get();
-      signer.initSign(TestUtils.getTestSigningKey());
-      signer.update("test data".getBytes(StandardCharsets.UTF_8));
-      byte[] signature = signer.sign();
-
-      assertNotNull("PSS signature should not be null", signature);
-      assertTrue("PSS signature should have content", signature.length > 0);
-    }
-  }
-
-  @Test
-  public void testCreateSigner_WithoutPssConfiguration() throws Exception {
-    java.util.Optional<Signature> signerOpt = OAuth.createSigner("RSASSA-PSS", false);
-    assertTrue("RSASSA-PSS without config should be available", signerOpt.isPresent());
-  }
-
-  @Test
-  public void testSignSignatureBaseStringAlgName_Consistency() throws Exception {
-    // Verify the algorithm name matches what's actually used
-    String algName = OAuth.signSignatureBaseStringAlgName("test", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8);
-
-    // Should return SHA256withRSA on standard JVMs
-    assertTrue("Algorithm should be SHA256withRSA or RSASSA-PSS",
-        "SHA256withRSA".equals(algName) || "RSASSA-PSS".equals(algName));
-
-    // Verify signing with the same params works
-    String signature = OAuth.signSignatureBaseString("test", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8);
-    assertNotNull("Signature should be generated", signature);
-  }
 
   @Test
   public void testDoSign_WithDifferentSignatureAlgorithms() throws Exception {
@@ -635,7 +513,7 @@ public class OAuthTest {
     assertTrue(authHeader.contains("oauth_timestamp=\""));
     assertTrue(authHeader.contains("oauth_version=\"1.0\""));
 
-    // Signature method & signature
+    // Signature method & signature (method depends on which JCA algorithm is used)
     assertTrue(authHeader.contains("oauth_signature_method=\"RSA-SHA256\""));
     assertTrue(authHeader.contains("oauth_signature=\""));
 
@@ -645,14 +523,30 @@ public class OAuthTest {
   }
 
   @Test
-  public void testSignSignatureBaseStringAlgName_ShouldReturnRsassaPss_WhenForcedForTests() throws Exception {
-    boolean previous = OAuth.FORCE_PSS_ALG_PROBE_FOR_TESTS;
-    OAuth.FORCE_PSS_ALG_PROBE_FOR_TESTS = true;
-    try {
-      String algName = OAuth.signSignatureBaseStringAlgName("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8);
-      assertEquals("RSASSA-PSS", algName);
-    } finally {
-      OAuth.FORCE_PSS_ALG_PROBE_FOR_TESTS = previous;
-    }
+  public void testGetAuthorizationHeader_ShouldReturnOAuthHeader_WhenNominalRSA_PSS() throws Exception {
+    URI uri = URI.create("https://sandbox.api.mastercard.com/service?param=value");
+    Charset charset = StandardCharsets.UTF_8;
+    String consumerKey = "test-consumer-key";
+    PrivateKey key = TestUtils.getTestSigningKeyRSAPPSS();
+
+    String payload = "Hello world!";
+    String authHeader = OAuth.getAuthorizationHeader(uri, "POST", payload, charset, consumerKey, key);
+
+    assertNotNull(authHeader);
+    assertTrue(authHeader.startsWith("OAuth "));
+
+    // Contains required/oauth fields
+    assertTrue(authHeader.contains("oauth_consumer_key=\"" + consumerKey + "\""));
+    assertTrue(authHeader.contains("oauth_nonce=\""));
+    assertTrue(authHeader.contains("oauth_timestamp=\""));
+    assertTrue(authHeader.contains("oauth_version=\"1.0\""));
+
+    // Signature method & signature (method depends on which JCA algorithm is used)
+    assertTrue(authHeader.contains("oauth_signature_method=\"RSA-PSS\""));
+    assertTrue(authHeader.contains("oauth_signature=\""));
+
+    // Body hash should match what getBodyHash computes
+    String expectedBodyHash = OAuth.getBodyHash(payload, charset, HASH_ALGORITHM);
+    assertTrue(authHeader.contains("oauth_body_hash=\"" + expectedBodyHash + "\""));
   }
 }

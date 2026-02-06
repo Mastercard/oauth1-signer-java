@@ -58,7 +58,6 @@ public class OAuth {
     HashMap<String, String> oauthParams = new HashMap<>();
     oauthParams.put("oauth_consumer_key", consumerKey);
     oauthParams.put("oauth_nonce", getNonce());
-    oauthParams.put("oauth_signature_method", "RSA-" + HASH_ALGORITHM.replace("-", ""));
     oauthParams.put("oauth_timestamp", getTimestamp());
     oauthParams.put("oauth_version", "1.0");
     oauthParams.put("oauth_body_hash", getBodyHash(payload, charset, HASH_ALGORITHM));
@@ -72,9 +71,8 @@ public class OAuth {
     // Signature base string
     String sbs = getSignatureBaseString(method, baseUri, paramString, charset);
 
-    // Signature
-    String signature = signSignatureBaseString(sbs, signingKey, charset);
-    oauthParams.put("oauth_signature", Util.percentEncode(signature, charset));
+    // Sign and determine signature method (set in oauthParams by signSignatureBaseString)
+    String signature = signSignatureBaseString(sbs, signingKey, charset, oauthParams);
 
     return getAuthorizationString(oauthParams);
   }
@@ -187,7 +185,7 @@ public class OAuth {
    * Generates a random string for replay protection as per
    * https://tools.ietf.org/html/rfc5849#section-3.3
    *
-   * @return random string of 16 characters.
+   * @return Random string of 16 characters
    */
   static String getNonce() {
     StringBuilder sb = new StringBuilder(NONCE_LENGTH);
@@ -249,6 +247,7 @@ public class OAuth {
    *
    * @param payload Request payload
    * @param charset Charset encoding of the request
+   * @param hashAlg Hash algorithm name (e.g., "SHA-256")
    * @return Base64 encoded cryptographic hash of the given payload
    */
   static String getBodyHash(String payload, Charset charset, String hashAlg) {
@@ -271,78 +270,51 @@ public class OAuth {
   /**
    * Signs the OAuth signature base string using an RSA private key.
    *
-   * <p>By default this uses {@code SHA256withRSA} (RSA PKCS#1 v1.5) to match the OAuth 1.0a
-   * {@code RSA-SHA256} signature method.
+   * <p>This method detects which signature algorithm is supported by the current provider:
+   * <ol>
+   *   <li>Probes if {@code SHA256withRSA} supports PSS parameters (it shouldn't, triggering an exception)</li>
+   *   <li>On expected failure, attempts {@code SHA256withRSA} (RSA PKCS#1 v1.5) signing first</li>
+   *   <li>If {@code SHA256withRSA} fails, falls back to {@code RSASSA-PSS} with parameters:
+   *       SHA-256 / MGF1(SHA-256) / saltLen=32 / trailerField=1</li>
+   * </ol>
    *
-   * <p>Some runtimes/providers may not expose {@code SHA256withRSA} but do support RSA-PSS only.
-   * In that case, this method falls back to {@code RSASSA-PSS} using the following parameters:
-   * SHA-256 / MGF1(SHA-256) / saltLen=32 / trailerField=1.
+   * <p>The method sets {@code oauth_signature_method} in the provided {@code oauthParams} map:
+   * <ul>
+   *   <li>{@code "RSA-SHA256"} when using SHA256withRSA (PKCS#1 v1.5)</li>
+   *   <li>{@code "RSA-PSS"} when using RSASSA-PSS</li>
+   * </ul>
    *
-   * @param sbs Signature base string formatted as per RFC 5849 section 3.4.1
-   * @param signingKey Private key of the RSA key pair that was established with the service provider
-   * @param charset Charset encoding of the request
+   * @param sbs         Signature base string formatted as per RFC 5849 section 3.4.1
+   * @param signingKey  Private key of the RSA key pair that was established with the service provider
+   * @param charset     Charset encoding of the request
+   * @param oauthParams Map of OAuth parameters where {@code oauth_signature_method} will be set based on the algorithm used
    * @return Base64-encoded RSA signature of the signature base string
    */
-  static String signSignatureBaseString(String sbs, PrivateKey signingKey, Charset charset) {
-    return createSigner(SHA_256_WITH_RSA, false)
-        .map(signer -> doSignUnchecked(sbs, signingKey, charset, signer, SHA_256_WITH_RSA))
-        .orElseGet(() -> doSignWithPssFallback(sbs, signingKey, charset));
-  }
-
-  /**
-   * Returns the JCA signature algorithm name that {@link #signSignatureBaseString(String, PrivateKey, Charset)}
-   * would use on the current runtime/provider.
-   *
-   * <p>This does <b>not</b> infer the signature scheme from the key material (an RSA private key does not
-   * encode whether to use PKCS#1 v1.5 or PSS). Instead, this probes provider support and returns either
-   * {@code "SHA256withRSA"} or {@code "RSASSA-PSS"}.
-   *
-   * @param sbs Signature base string (only used to validate RSA-PSS viability when needed)
-   * @param signingKey Signing key
-   * @param charset Charset
-   * @return JCA algorithm name used ("SHA256withRSA" or "RSASSA-PSS")
-   */
-  static String signSignatureBaseStringAlgName(String sbs, PrivateKey signingKey, Charset charset) {
-    if (signingKey == null) {
-      throw new IllegalArgumentException("signingKey must not be null");
-    }
-
-    // If we can create the PKCS#1 signer, we will use it.
-    if (!FORCE_PSS_ALG_PROBE_FOR_TESTS && createSigner(SHA_256_WITH_RSA, false).isPresent()) {
-      return SHA_256_WITH_RSA;
-    }
-
-    // Otherwise, ensure PSS is workable.
-    doSignWithPssFallback(sbs, signingKey, charset);
-    return RSASSA_PSS;
-  }
-
-  /**
-   * Test-only seam to force the RSA-PSS branch in unit tests.
-   *
-   * <p>When set to {@code true}, {@link #signSignatureBaseStringAlgName(String, PrivateKey, Charset)} behaves as if
-   * {@code SHA256withRSA} was unavailable and validates RSA-PSS viability instead.
-   */
-  static volatile boolean FORCE_PSS_ALG_PROBE_FOR_TESTS = false;
-
-  static java.util.Optional<Signature> createSigner(String algorithm, boolean configurePss) {
+  static String signSignatureBaseString(String sbs, PrivateKey signingKey, Charset charset, HashMap<String, String> oauthParams) {
+    // Probe algorithm support: SHA256withRSA should reject PSS parameters, triggering fallback to standard RSA signing first
+    String signature = null;
     try {
-      Signature signer = Signature.getInstance(algorithm);
-      if (configurePss) {
-        signer.setParameter(new PSSParameterSpec(
-            HASH_ALGORITHM,
-            MGF_1,
-            MGF1ParameterSpec.SHA256,
-            RSAPSS_SALT_LENGTH,
-            TRAILER_FIELD));
-      }
-      return java.util.Optional.of(signer);
+      Signature signer = Signature.getInstance(SHA_256_WITH_RSA);
+      signer.setParameter(new PSSParameterSpec(
+              HASH_ALGORITHM,
+              MGF_1,
+              MGF1ParameterSpec.SHA256,
+              RSAPSS_SALT_LENGTH,
+              TRAILER_FIELD));
     } catch (GeneralSecurityException e) {
-      return java.util.Optional.empty();
+      try {
+        signature = doSignSHA256(sbs, signingKey, charset);
+        oauthParams.put("oauth_signature_method", "RSA-SHA256");
+      } catch (Exception ex) { // Catch any exception from SHA256withRSA signing and fall back to PSS
+        signature = doSignWithPss(sbs, signingKey, charset);
+        oauthParams.put("oauth_signature_method", "RSA-PSS");
+      }
     }
+    oauthParams.put("oauth_signature", Util.percentEncode(signature, charset));
+    return  signature;
   }
 
-  static String doSignWithPssFallback(String sbs, PrivateKey signingKey, Charset charset) {
+  static String doSignWithPss(String sbs, PrivateKey signingKey, Charset charset) {
     if (signingKey == null) {
       throw new IllegalArgumentException("signingKey must not be null");
     }
@@ -361,19 +333,15 @@ public class OAuth {
     }
   }
 
-  static String doSignUnchecked(String sbs, PrivateKey signingKey, Charset charset, Signature signer, String alg) {
+  static String doSignSHA256(String sbs, PrivateKey signingKey, Charset charset) {
     if (signingKey == null) {
       throw new IllegalArgumentException("signingKey must not be null");
     }
-
     try {
+      Signature signer = Signature.getInstance(SHA_256_WITH_RSA);
       return doSign(sbs, signingKey, charset, signer);
     } catch (GeneralSecurityException e) {
-      // If init/sign fails with SHA256withRSA (bad key/provider), attempt PSS as a last resort.
-      if (!SHA_256_WITH_RSA.equals(alg)) {
-        throw new IllegalStateException("Unable to sign OAuth signature base string", e);
-      }
-      return doSignWithPssFallback(sbs, signingKey, charset);
+      throw new IllegalStateException("Unable to sign OAuth signature base string using " + SHA_256_WITH_RSA, e);
     }
   }
 
