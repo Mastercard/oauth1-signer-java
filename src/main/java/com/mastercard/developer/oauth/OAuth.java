@@ -24,11 +24,28 @@ public class OAuth {
 
   public static final String EMPTY_STRING = "";
   public static final String AUTHORIZATION_HEADER_NAME = "Authorization";
+  public static final SignatureMethod DEFAULT_SIGNATURE_METHOD = SignatureMethod.RSA_SHA256;
 
   private static final Logger LOG = Logger.getLogger(OAuth.class.getName());
-  private static final String HASH_ALGORITHM = "SHA-256";
+  private static final String BODY_HASH_ALGORITHM = "SHA-256";
   private static final int NONCE_LENGTH = 16;
   private static final String ALPHA_NUMERIC_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+  /**
+   * Creates a Mastercard API compliant OAuth Authorization header, using RSA-SHA256 as the signature method
+   *
+   * @param uri Target URI for this request
+   * @param method HTTP method of the request
+   * @param payload Payload (nullable)
+   * @param charset Charset encoding of the request
+   * @param consumerKey Consumer key set up in a Mastercard Developer Portal project
+   * @param signingKey The private key that will be used for signing the request that corresponds to the consumerKey
+   * @return Valid OAuth1.0a signature with a body hash when payload is present
+   * @see #getAuthorizationHeader(URI, String, String, Charset, String, PrivateKey, SignatureMethod)
+   */
+  public static String getAuthorizationHeader(URI uri, String method, String payload, Charset charset, String consumerKey, PrivateKey signingKey) {
+    return getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey, DEFAULT_SIGNATURE_METHOD);
+  }
 
   /**
    * Creates a Mastercard API compliant OAuth Authorization header
@@ -39,18 +56,19 @@ public class OAuth {
    * @param charset Charset encoding of the request
    * @param consumerKey Consumer key set up in a Mastercard Developer Portal project
    * @param signingKey The private key that will be used for signing the request that corresponds to the consumerKey
+   * @param signMethod The signature method to use when signing the request
    * @return Valid OAuth1.0a signature with a body hash when payload is present
    */
-  public static String getAuthorizationHeader(URI uri, String method, String payload, Charset charset, String consumerKey, PrivateKey signingKey) {
+  public static String getAuthorizationHeader(URI uri, String method, String payload, Charset charset, String consumerKey, PrivateKey signingKey, SignatureMethod signMethod) {
     TreeMap<String, List<String>> queryParams = extractQueryParams(uri, charset);
 
     HashMap<String, String> oauthParams = new HashMap<>();
     oauthParams.put("oauth_consumer_key", consumerKey);
     oauthParams.put("oauth_nonce", getNonce());
-    oauthParams.put("oauth_signature_method", "RSA-" + HASH_ALGORITHM.replace("-", ""));
+    oauthParams.put("oauth_signature_method", signMethod.getOauthName());
     oauthParams.put("oauth_timestamp", getTimestamp());
     oauthParams.put("oauth_version", "1.0");
-    oauthParams.put("oauth_body_hash", getBodyHash(payload, charset, HASH_ALGORITHM));
+    oauthParams.put("oauth_body_hash", getBodyHash(payload, charset, BODY_HASH_ALGORITHM));
 
     // Combine query and oauth_ parameters into lexicographically sorted string
     String paramString = toOauthParamString(queryParams, oauthParams);
@@ -62,7 +80,7 @@ public class OAuth {
     String sbs = getSignatureBaseString(method, baseUri, paramString, charset);
 
     // Signature
-    String signature = signSignatureBaseString(sbs, signingKey, charset);
+    String signature = signSignatureBaseString(sbs, signingKey, charset, signMethod);
     oauthParams.put("oauth_signature", Util.percentEncode(signature, charset));
 
     return getAuthorizationString(oauthParams);
@@ -253,6 +271,19 @@ public class OAuth {
   }
 
   /**
+   * Signs the signature base string using an RSA private key and RSA-SHA256 as the signature method.
+   *
+   * @param sbs Signature base string formatted as per https://tools.ietf.org/html/rfc5849#section-3.4.1
+   * @param signingKey Private key of the RSA key pair that was established with the service provider
+   * @param charset Charset encoding of the request
+   * @return RSA signature matching the contents of signature base string
+   * @see #signSignatureBaseString(String, PrivateKey, Charset, SignatureMethod)
+   */
+  static String signSignatureBaseString(String sbs, PrivateKey signingKey, Charset charset) {
+    return signSignatureBaseString(sbs, signingKey, charset, DEFAULT_SIGNATURE_METHOD);
+  }
+
+  /**
    * Signs the signature base string using an RSA private key. The methodology is described at
    * https://tools.ietf.org/html/rfc5849#section-3.4.3 but Mastercard uses the stronger SHA-256 algorithm
    * as a replacement for the described SHA1 which is no longer considered secure.
@@ -260,18 +291,22 @@ public class OAuth {
    * @param sbs Signature base string formatted as per https://tools.ietf.org/html/rfc5849#section-3.4.1
    * @param signingKey Private key of the RSA key pair that was established with the service provider
    * @param charset Charset encoding of the request
+   * @param signMethod The signature method to use when signing the request
    * @return RSA signature matching the contents of signature base string
    */
-  static String signSignatureBaseString(String sbs, PrivateKey signingKey, Charset charset) {
+  static String signSignatureBaseString(String sbs, PrivateKey signingKey, Charset charset, SignatureMethod signMethod) {
     try {
-      Signature signer = Signature.getInstance("SHA256withRSA");
+      Signature signer = Signature.getInstance(signMethod.getJcaName());
+      if(signMethod.getAlgorithmParams() != null) {
+        signer.setParameter(signMethod.getAlgorithmParams());
+      }
       signer.initSign(signingKey);
       byte[] sbsBytes = sbs.getBytes(charset);
       signer.update(sbsBytes);
       byte[] signatureBytes = signer.sign();
       return Util.b64Encode(signatureBytes);
     } catch (GeneralSecurityException e) {
-      throw new IllegalStateException("Unable to RSA-SHA256 sign the given string with the provided key", e);
+      throw new IllegalStateException("Unable to sign with method " + signMethod.getOauthName() + " using the provided key", e);
     }
   }
 

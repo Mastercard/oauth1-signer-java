@@ -1,6 +1,7 @@
 package com.mastercard.developer.signers;
 
 import com.mastercard.developer.oauth.OAuth;
+import com.mastercard.developer.oauth.SignatureMethod;
 import feign.RequestTemplate;
 
 import java.net.URI;
@@ -16,8 +17,18 @@ public class OpenFeignSigner extends AbstractSigner {
         this.baseUri = baseUri;
     }
 
+    public OpenFeignSigner(String consumerKey, PrivateKey signingKey, String baseUri, SignatureMethod signatureMethod) {
+        super(consumerKey, signingKey, signatureMethod);
+        this.baseUri = baseUri;
+    }
+
     public OpenFeignSigner(Charset charset, String consumerKey, PrivateKey signingKey, String baseUri) {
-        super(charset, consumerKey, signingKey);
+        super(charset, consumerKey, signingKey, OAuth.DEFAULT_SIGNATURE_METHOD);
+        this.baseUri = baseUri;
+    }
+
+    public OpenFeignSigner(Charset charset, String consumerKey, PrivateKey signingKey, String baseUri, SignatureMethod signatureMethod) {
+        super(charset, consumerKey, signingKey, signatureMethod);
         this.baseUri = baseUri;
     }
 
@@ -26,7 +37,7 @@ public class OpenFeignSigner extends AbstractSigner {
         String method = requestTemplate.method();
         byte[] bodyBytes = requestTemplate.body();
         String payload = bodyBytes != null ? new String(bodyBytes, charset) : null;
-        String authHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey);
+        String authHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey, signatureMethod);
         requestTemplate.header(OAuth.AUTHORIZATION_HEADER_NAME, authHeader);
     }
 }

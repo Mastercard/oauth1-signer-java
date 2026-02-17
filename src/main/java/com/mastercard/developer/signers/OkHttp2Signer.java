@@ -1,6 +1,7 @@
 package com.mastercard.developer.signers;
 
 import com.mastercard.developer.oauth.OAuth;
+import com.mastercard.developer.oauth.SignatureMethod;
 import com.squareup.okhttp.*;
 import okio.Buffer;
 
@@ -17,11 +18,19 @@ import java.security.PrivateKey;
 public class OkHttp2Signer extends AbstractSigner {
 
     public OkHttp2Signer(String consumerKey, PrivateKey signingKey) {
-        super(StandardCharsets.UTF_8, consumerKey, signingKey);
+        super(StandardCharsets.UTF_8, consumerKey, signingKey, OAuth.DEFAULT_SIGNATURE_METHOD);
+    }
+
+    public OkHttp2Signer(String consumerKey, PrivateKey signingKey, SignatureMethod signatureMethod) {
+        super(StandardCharsets.UTF_8, consumerKey, signingKey, signatureMethod);
     }
 
     public OkHttp2Signer(Charset charset, String consumerKey, PrivateKey signingKey) {
-        super(charset, consumerKey, signingKey);
+        super(charset, consumerKey, signingKey, OAuth.DEFAULT_SIGNATURE_METHOD);
+    }
+
+    public OkHttp2Signer(Charset charset, String consumerKey, PrivateKey signingKey, SignatureMethod signatureMethod) {
+        super(charset, consumerKey, signingKey, signatureMethod);
     }
 
     public void sign(Request.Builder req) throws IOException {
@@ -38,7 +47,7 @@ public class OkHttp2Signer extends AbstractSigner {
             payload = buffer.readUtf8();
         }
 
-        String authHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey);
+        String authHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey, signatureMethod);
         req.addHeader(OAuth.AUTHORIZATION_HEADER_NAME, authHeader);
     }
 }
