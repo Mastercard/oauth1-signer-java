@@ -13,12 +13,43 @@ import org.mockito.Mockito;
 
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 
 import static com.mastercard.developer.test.TestUtils.UTF8_CHARSET;
 import static com.mastercard.developer.test.TestUtils.getTestSigningKey;
 
 public class OkHttp2SignerTest {
+
+    @ParameterizedTest
+    @EnumSource(SignatureMethod.class)
+    public void testConstructor_WithSignatureMethod_ShouldUseUtf8CharsetAndProvidedSignatureMethod(SignatureMethod signatureMethod) throws Exception {
+
+        PrivateKey signingKey = getTestSigningKey();
+        String consumerKey = "Some key";
+
+        OkHttp2Signer instanceUnderTest = new OkHttp2Signer(consumerKey, signingKey, signatureMethod);
+
+        Assert.assertEquals(consumerKey, instanceUnderTest.consumerKey);
+        Assert.assertEquals(signingKey, instanceUnderTest.signingKey);
+        Assert.assertEquals(StandardCharsets.UTF_8, instanceUnderTest.charset);
+        Assert.assertEquals(signatureMethod, instanceUnderTest.signatureMethod);
+    }
+
+    @Test
+    public void testConstructor_WithCharset_ShouldUseProvidedCharsetAndDefaultSignatureMethod() throws Exception {
+
+        PrivateKey signingKey = getTestSigningKey();
+        String consumerKey = "Some key";
+        Charset charset = UTF8_CHARSET;
+
+        OkHttp2Signer instanceUnderTest = new OkHttp2Signer(charset, consumerKey, signingKey);
+
+        Assert.assertEquals(consumerKey, instanceUnderTest.consumerKey);
+        Assert.assertEquals(signingKey, instanceUnderTest.signingKey);
+        Assert.assertEquals(charset, instanceUnderTest.charset);
+        Assert.assertEquals(OAuth.DEFAULT_SIGNATURE_METHOD, instanceUnderTest.signatureMethod);
+    }
 
     @Test
     public void testSign_ShouldAddOAuth1HeaderToPostRequest() throws Exception {

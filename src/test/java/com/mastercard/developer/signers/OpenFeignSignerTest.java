@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -19,6 +20,26 @@ import java.util.Collection;
 import static com.mastercard.developer.test.TestUtils.getTestSigningKey;
 
 public class OpenFeignSignerTest {
+
+    @ParameterizedTest
+    @EnumSource(SignatureMethod.class)
+    public void testConstructor_WithSignatureMethod_ShouldUseDefaultCharsetAndProvidedValues(SignatureMethod signatureMethod) throws Exception {
+
+        PrivateKey signingKey = getTestSigningKey();
+        String consumerKey = "Some key";
+        String baseUri = "https://api.mastercard.com/";
+
+        OpenFeignSigner instanceUnderTest = new OpenFeignSigner(consumerKey, signingKey, baseUri, signatureMethod);
+
+        Assert.assertEquals(consumerKey, instanceUnderTest.consumerKey);
+        Assert.assertEquals(signingKey, instanceUnderTest.signingKey);
+        Assert.assertEquals(Charset.defaultCharset(), instanceUnderTest.charset);
+        Assert.assertEquals(signatureMethod, instanceUnderTest.signatureMethod);
+
+        Field baseUriField = OpenFeignSigner.class.getDeclaredField("baseUri");
+        baseUriField.setAccessible(true);
+        Assert.assertEquals(baseUri, baseUriField.get(instanceUnderTest));
+    }
 
     @Test
     public void testSign_ShouldAddOAuth1HeaderToPostRequest() throws Exception {

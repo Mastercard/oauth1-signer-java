@@ -1,5 +1,6 @@
 package com.mastercard.developer.interceptors;
 
+import com.mastercard.developer.oauth.OAuth;
 import com.mastercard.developer.oauth.SignatureMethod;
 import com.mastercard.developer.signers.OpenFeignSigner;
 import com.mastercard.developer.test.TestUtils;
@@ -14,6 +15,27 @@ import org.mockito.Mockito;
 import java.security.PrivateKey;
 
 class OpenFeignOAuth1InterceptorTest {
+
+    @Test
+    void constructor_shouldInstantiateSignerWithDefaultSignatureMethod() throws Exception {
+        PrivateKey signingKey = TestUtils.getTestSigningKey();
+        String consumerKey = "consumer-key";
+        String baseUri = "https://api.mastercard.com";
+        MockedConstruction.Context[] capturedContext = new MockedConstruction.Context[1];
+
+        try (MockedConstruction<OpenFeignSigner> mocked = Mockito.mockConstruction(
+                OpenFeignSigner.class,
+                (mock, context) -> capturedContext[0] = context)) {
+            new OpenFeignOAuth1Interceptor(consumerKey, signingKey, baseUri);
+
+            Assertions.assertEquals(1, mocked.constructed().size());
+            MockedConstruction.Context context = capturedContext[0];
+            Assertions.assertEquals(consumerKey, context.arguments().get(0));
+            Assertions.assertEquals(signingKey, context.arguments().get(1));
+            Assertions.assertEquals(baseUri, context.arguments().get(2));
+            Assertions.assertEquals(OAuth.DEFAULT_SIGNATURE_METHOD, context.arguments().get(3));
+        }
+    }
 
     @ParameterizedTest
     @EnumSource(SignatureMethod.class)

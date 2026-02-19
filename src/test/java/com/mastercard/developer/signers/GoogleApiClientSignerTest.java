@@ -20,6 +20,36 @@ import static com.mastercard.developer.test.TestUtils.UTF8_CHARSET;
 
 public class GoogleApiClientSignerTest {
 
+    @ParameterizedTest
+    @EnumSource(SignatureMethod.class)
+    public void testConstructor_WithSignatureMethod_ShouldUseDefaultCharsetAndProvidedSignatureMethod(SignatureMethod signatureMethod) throws Exception {
+
+        PrivateKey signingKey = TestUtils.getTestSigningKey();
+        String consumerKey = "Some key";
+
+        GoogleApiClientSigner instanceUnderTest = new GoogleApiClientSigner(consumerKey, signingKey, signatureMethod);
+
+        Assert.assertEquals(consumerKey, instanceUnderTest.consumerKey);
+        Assert.assertEquals(signingKey, instanceUnderTest.signingKey);
+        Assert.assertEquals(Charset.defaultCharset(), instanceUnderTest.charset);
+        Assert.assertEquals(signatureMethod, instanceUnderTest.signatureMethod);
+    }
+
+    @Test
+    public void testConstructor_WithCharset_ShouldUseProvidedCharsetAndDefaultSignatureMethod() throws Exception {
+
+        PrivateKey signingKey = TestUtils.getTestSigningKey();
+        String consumerKey = "Some key";
+        Charset charset = UTF8_CHARSET;
+
+        GoogleApiClientSigner instanceUnderTest = new GoogleApiClientSigner(charset, consumerKey, signingKey);
+
+        Assert.assertEquals(consumerKey, instanceUnderTest.consumerKey);
+        Assert.assertEquals(signingKey, instanceUnderTest.signingKey);
+        Assert.assertEquals(charset, instanceUnderTest.charset);
+        Assert.assertEquals(OAuth.DEFAULT_SIGNATURE_METHOD, instanceUnderTest.signatureMethod);
+    }
+
     @Test
     public void testSign_ShouldAddOAuth1HeaderToPostRequest() throws Exception {
 

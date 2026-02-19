@@ -1,6 +1,7 @@
 package com.mastercard.developer.interceptors;
 
 import com.google.api.client.http.HttpRequest;
+import com.mastercard.developer.oauth.OAuth;
 import com.mastercard.developer.oauth.SignatureMethod;
 import com.mastercard.developer.signers.GoogleApiClientSigner;
 import com.mastercard.developer.test.TestUtils;
@@ -14,6 +15,25 @@ import org.mockito.Mockito;
 import java.security.PrivateKey;
 
 class HttpExecuteOAuth1InterceptorTest {
+
+    @Test
+    void constructor_shouldInstantiateSignerWithDefaultSignatureMethod() throws Exception {
+        PrivateKey signingKey = TestUtils.getTestSigningKey();
+        String consumerKey = "consumer-key";
+        MockedConstruction.Context[] capturedContext = new MockedConstruction.Context[1];
+
+        try (MockedConstruction<GoogleApiClientSigner> mocked = Mockito.mockConstruction(
+                GoogleApiClientSigner.class,
+                (mock, context) -> capturedContext[0] = context)) {
+            new HttpExecuteOAuth1Interceptor(consumerKey, signingKey);
+
+            Assertions.assertEquals(1, mocked.constructed().size());
+            MockedConstruction.Context context = capturedContext[0];
+            Assertions.assertEquals(consumerKey, context.arguments().get(0));
+            Assertions.assertEquals(signingKey, context.arguments().get(1));
+            Assertions.assertEquals(OAuth.DEFAULT_SIGNATURE_METHOD, context.arguments().get(2));
+        }
+    }
 
     @ParameterizedTest
     @EnumSource(SignatureMethod.class)
