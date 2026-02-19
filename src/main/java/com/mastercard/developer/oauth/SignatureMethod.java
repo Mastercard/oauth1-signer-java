@@ -5,7 +5,7 @@ import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PSSParameterSpec;
 
 /**
- * Supported OAuth 1.0 signature methods.
+ * Supported OAuth 1.0 signature methods
  */
 public enum SignatureMethod {
 
