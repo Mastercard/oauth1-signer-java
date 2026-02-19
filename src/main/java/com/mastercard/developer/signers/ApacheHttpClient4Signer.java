@@ -4,6 +4,8 @@ import com.mastercard.developer.oauth.OAuth;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.PrivateKey;
+
+import com.mastercard.developer.oauth.SignatureMethod;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -17,6 +19,10 @@ public class ApacheHttpClient4Signer extends AbstractSigner {
 
   public ApacheHttpClient4Signer(String consumerKey, PrivateKey signingKey) {
     super(consumerKey, signingKey);
+  }
+
+  public ApacheHttpClient4Signer(String consumerKey, PrivateKey signingKey, SignatureMethod signatureMethod) {
+    super(consumerKey, signingKey, signatureMethod);
   }
 
   public void sign(HttpRequestBase req) throws IOException {
@@ -36,7 +42,7 @@ public class ApacheHttpClient4Signer extends AbstractSigner {
       }
     }
 
-    String authHeader = OAuth.getAuthorizationHeader(req.getURI(), req.getMethod(), payload, charset, consumerKey, signingKey);
+    String authHeader = OAuth.getAuthorizationHeader(req.getURI(), req.getMethod(), payload, charset, consumerKey, signingKey, signatureMethod);
     req.setHeader(OAuth.AUTHORIZATION_HEADER_NAME, authHeader);
   }
 }

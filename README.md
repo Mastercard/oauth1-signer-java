@@ -87,7 +87,11 @@ URI uri = URI.create("https://sandbox.api.mastercard.com/service");
 String method = "POST";
 String payload = "Hello world!";
 Charset charset = StandardCharsets.UTF_8;
-String authHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey);
+String authHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey); // uses RSA_SHA256 as the default signature method
+```
+Alternatively, you can specify the signature method as well:
+```java
+String authHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey, SignatureMethod.RSA_PSS_SHA256);
 ```
 
 ### Signing HTTP Client Request Objects <a name="signing-http-client-request-objects"></a>
@@ -113,7 +117,13 @@ HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
 con.setRequestMethod("POST");
 con.setRequestProperty("Content-Type", "application/json; charset=" + charset.name());
 
-HttpsUrlConnectionSigner signer = new HttpsUrlConnectionSigner(charset, consumerKey, signingKey);
+HttpsUrlConnectionSigner signer = new HttpsUrlConnectionSigner(charset, consumerKey, signingKey); // uses RSA_SHA256 as the default signature method
+signer.sign(con, payload);
+```
+
+You can also specify the signature method when creating the signer object:
+```java
+HttpsUrlConnectionSigner signer = new HttpsUrlConnectionSigner(charset, consumerKey, signingKey, SignatureMethod.RSA_PSS_SHA256);
 signer.sign(con, payload);
 ```
 
@@ -125,7 +135,9 @@ HttpClient httpClient = HttpClientBuilder.create().build();
 HttpPost httpPost = new HttpPost("https://sandbox.api.mastercard.com/service");
 httpPost.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
 
-ApacheHttpClient4Signer signer = new ApacheHttpClient4Signer(consumerKey, signingKey);
+ApacheHttpClient4Signer signer = new ApacheHttpClient4Signer(consumerKey, signingKey); // uses RSA_SHA256 as the default signature method
+// You can also specify the signature method:
+// ApacheHttpClient4Signer signer = new ApacheHttpClient4Signer(consumerKey, signingKey, SignatureMethod.RSA_PSS_SHA256);
 signer.sign(httpPost);
 ```
 
@@ -140,7 +152,9 @@ Request.Builder request = new Request.Builder()
         .url("https://sandbox.api.mastercard.com/service")
         .post(body);
 
-OkHttpSigner signer = new OkHttpSigner(consumerKey, signingKey);
+OkHttpSigner signer = new OkHttpSigner(consumerKey, signingKey); // uses RSA_SHA256 as the default signature method
+// You can also specify the signature method:
+// OkHttpSigner signer = new OkHttpSigner(consumerKey, signingKey, SignatureMethod.RSA_PSS_SHA256);
 signer.sign(request);
 ```
 
@@ -152,7 +166,9 @@ ClientRequest request = ClientRequest.create(HttpMethod.POST, URI.create("https:
         .body(BodyInserters.fromValue(new BodyInserterWrapper(yourRequestObject)))
         .build();
 
-SpringWebfluxSigner signer = new SpringWebfluxSigner(consumerKey, signingKey);
+SpringWebfluxSigner signer = new SpringWebfluxSigner(consumerKey, signingKey); // uses RSA_SHA256 as the default signature method
+// You can also specify the signature method:
+// SpringWebfluxSigner signer = new SpringWebfluxSigner(consumerKey, signingKey, SignatureMethod.RSA_PSS_SHA256);
 ClientRequest signedRequest = signer.sign(request);
 client.exchange(signedRequest);
 ```
@@ -193,7 +209,11 @@ See also:
 ApiClient client = new ApiClient();
 client.setBasePath("https://sandbox.api.mastercard.com");
 List<Interceptor> interceptors = client.getHttpClient().interceptors();
-interceptors.add(new OkHttp2OAuth1Interceptor(consumerKey, signingKey));
+interceptors.add(
+        new OkHttp2OAuth1Interceptor(consumerKey, signingKey) // uses RSA_SHA256 as the default signature method
+        // if you want to specify the signature method
+        // new OkHttp2OAuth1Interceptor(consumerKey, signingKey, SignatureMethod.RSA_PSS_SHA256)
+);
 ServiceApi serviceApi = new ServiceApi(client);
 // ...
 ```
@@ -207,7 +227,11 @@ client.setHttpClient(
     client.getHttpClient()
         .newBuilder()
         .proxy(proxy) // Optional proxy
-        .addInterceptor(new OkHttpOAuth1Interceptor(consumerKey, signingKey))
+        .addInterceptor(
+                new OkHttpOAuth1Interceptor(consumerKey, signingKey) // uses RSA_SHA256 as the default signature method
+                // if you want to specify the signature method
+                // new OkHttpOAuth1Interceptor(consumerKey, signingKey, SignatureMethod.RSA_PSS_SHA256)
+        )
         .build()
 );
 ServiceApi serviceApi = new ServiceApi(client);
@@ -231,7 +255,11 @@ ApiClient client = new ApiClient();
 client.setBasePath("https://sandbox.api.mastercard.com");
 Feign.Builder feignBuilder = client.getFeignBuilder();
 ArrayList<RequestInterceptor> interceptors = new ArrayList<>();
-interceptors.add(new OpenFeignOAuth1Interceptor(consumerKey, signingKey, client.getBasePath()));
+interceptors.add(
+        new OpenFeignOAuth1Interceptor(consumerKey, signingKey, client.getBasePath()) // uses RSA_SHA256 as the default signature method
+        // if you want to specify the signature method
+        // new OpenFeignOAuth1Interceptor(consumerKey, signingKey, client.getBasePath(), SignatureMethod.RSA_PSS_SHA256)
+);
 feignBuilder.requestInterceptors(interceptors);
 ServiceApi serviceApi = client.buildClient(ServiceApi.class);
 // ...
@@ -254,7 +282,11 @@ ApiClient client = new ApiClient();
 RestAdapter.Builder adapterBuilder = client.getAdapterBuilder();
 adapterBuilder.setEndpoint("https://sandbox.api.mastercard.com"); 
 List<Interceptor> interceptors = client.getOkClient().interceptors();
-interceptors.add(new OkHttp2OAuth1Interceptor(consumerKey, signingKey));
+interceptors.add(
+        new OkHttp2OAuth1Interceptor(consumerKey, signingKey) // uses RSA_SHA256 as the default signature method
+        // if you want to specify the signature method
+        // new OkHttp2OAuth1Interceptor(consumerKey, signingKey, SignatureMethod.RSA_PSS_SHA256)
+);
 ServiceApi serviceApi = client.createService(ServiceApi.class);
 // ...
 ```
@@ -276,7 +308,11 @@ ApiClient client = new ApiClient();
 Retrofit.Builder adapterBuilder = client.getAdapterBuilder();
 adapterBuilder.baseUrl("https://sandbox.api.mastercard.com"); 
 OkHttpClient.Builder okBuilder = client.getOkBuilder();
-okBuilder.addInterceptor(new OkHttpOAuth1Interceptor(consumerKey, signingKey));
+okBuilder.addInterceptor(
+        new OkHttpOAuth1Interceptor(consumerKey, signingKey) // uses RSA_SHA256 as the default signature method
+        // if you want to specify the signature method
+        // new OkHttpOAuth1Interceptor(consumerKey, signingKey, SignatureMethod.RSA_PSS_SHA256)
+);
 ServiceApi serviceApi = client.createService(ServiceApi.class);
 // ...
 ```
@@ -297,7 +333,11 @@ ServiceApi serviceApi = client.createService(ServiceApi.class);
 HttpRequestInitializer initializer = new HttpRequestInitializer() {
     @Override
     public void initialize(HttpRequest request) {
-        request.setInterceptor(new HttpExecuteOAuth1Interceptor(consumerKey, signingKey));
+        request.setInterceptor(
+                new HttpExecuteOAuth1Interceptor(consumerKey, signingKey) // uses RSA_SHA256 as the default signature method
+                // if you want to specify the signature method
+                // new HttpExecuteOAuth1Interceptor(consumerKey, signingKey, SignatureMethod.RSA_PSS_SHA256)
+        );
     }
 };
 ApiClient client = new ApiClient("https://sandbox.api.mastercard.com", null, initializer, null);
@@ -320,7 +360,11 @@ ServiceApi serviceApi = client.serviceApi();
 ```java
 WebClient.Builder webClientBuilder = WebClient.builder()
   .baseUrl("https://api.mastercard.com/service")
-  .filter(new SpringWebfluxOAuth1Interceptor(consumerKey, signingKey));
+  .filter(
+          new SpringWebfluxOAuth1Interceptor(consumerKey, signingKey) // uses RSA_SHA256 as the default signature method
+            // if you want to specify the signature method
+            // new SpringWebfluxOAuth1Interceptor(consumerKey, signingKey, SignatureMethod.RSA_PSS_SHA256)
+  );
 
 ApiClient apiClient = new ApiClient(webClientBuilder);
 ServiceApi serviceApi = client.serviceApi();
