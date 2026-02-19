@@ -3,7 +3,6 @@ package com.mastercard.developer.signers;
 import com.google.api.client.http.HttpContent;
 import com.google.api.client.http.HttpRequest;
 import com.mastercard.developer.oauth.OAuth;
-import com.mastercard.developer.oauth.SignatureMethod;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,16 +20,8 @@ public class GoogleApiClientSigner extends AbstractSigner {
         super(consumerKey, signingKey);
     }
 
-    public GoogleApiClientSigner(String consumerKey, PrivateKey signingKey, SignatureMethod signatureMethod) {
-        super(consumerKey, signingKey, signatureMethod);
-    }
-
     public GoogleApiClientSigner(Charset charset, String consumerKey, PrivateKey signingKey) {
-        super(charset, consumerKey, signingKey, OAuth.DEFAULT_SIGNATURE_METHOD);
-    }
-
-    public GoogleApiClientSigner(Charset charset, String consumerKey, PrivateKey signingKey, SignatureMethod signatureMethod) {
-        super(charset, consumerKey, signingKey, signatureMethod);
+        super(charset, consumerKey, signingKey);
     }
 
     public void sign(HttpRequest request) throws IOException {
@@ -45,7 +36,7 @@ public class GoogleApiClientSigner extends AbstractSigner {
             payload = outputStream.toString(charset.name());
         }
 
-        String authorizationHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey, signatureMethod);
+        String authorizationHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey);
         request.getHeaders().setAuthorization(authorizationHeader);
     }
 }

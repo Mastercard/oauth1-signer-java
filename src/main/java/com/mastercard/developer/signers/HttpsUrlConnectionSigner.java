@@ -1,8 +1,6 @@
 package com.mastercard.developer.signers;
 
 import com.mastercard.developer.oauth.OAuth;
-import com.mastercard.developer.oauth.SignatureMethod;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
@@ -15,11 +13,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class HttpsUrlConnectionSigner extends AbstractSigner {
 
   public HttpsUrlConnectionSigner(Charset charset, String consumerKey, PrivateKey signingKey) {
-    super(charset, consumerKey, signingKey, OAuth.DEFAULT_SIGNATURE_METHOD);
-  }
-
-  public HttpsUrlConnectionSigner(Charset charset, String consumerKey, PrivateKey signingKey, SignatureMethod signatureMethod) {
-    super(charset, consumerKey, signingKey, signatureMethod);
+    super(charset, consumerKey, signingKey);
   }
 
   public void sign(HttpsURLConnection req, String payload) {
@@ -30,7 +24,7 @@ public class HttpsUrlConnectionSigner extends AbstractSigner {
       throw new IllegalArgumentException("The provided URL could not be converted to an URI representation", e);
     }
     String method = req.getRequestMethod();
-    String authHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey, signatureMethod);
+    String authHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey);
     req.setRequestProperty(OAuth.AUTHORIZATION_HEADER_NAME, authHeader);
   }
 }

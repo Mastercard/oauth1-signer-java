@@ -2,7 +2,6 @@ package com.mastercard.developer.signers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mastercard.developer.oauth.OAuth;
-import com.mastercard.developer.oauth.SignatureMethod;
 import org.springframework.http.ReactiveHttpOutputMessage;
 import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -21,17 +20,13 @@ public class SpringWebfluxSigner extends AbstractSigner {
         super(consumerKey, signingKey);
     }
 
-    public SpringWebfluxSigner(String consumerKey, PrivateKey signingKey, SignatureMethod signatureMethod) {
-        super(consumerKey, signingKey, signatureMethod);
-    }
-
     public ClientRequest sign(ClientRequest request) throws Exception {
         URI uri = request.url();
         String method = request.method().name();
         BodyInserterWrapper<Object> bodyInserterWrapper = (BodyInserterWrapper<Object>) request.body();
         String payload = new ObjectMapper().writeValueAsString(bodyInserterWrapper.getBody());
 
-        String authHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey, signatureMethod);
+        String authHeader = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey);
 
         // Add auth header
         return Mono.just(ClientRequest.from(request)

@@ -1,7 +1,5 @@
 package com.mastercard.developer.interceptors;
 
-import com.mastercard.developer.oauth.OAuth;
-import com.mastercard.developer.oauth.SignatureMethod;
 import com.mastercard.developer.signers.OpenFeignSigner;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
@@ -17,11 +15,7 @@ public class OpenFeignOAuth1Interceptor implements RequestInterceptor {
     private final OpenFeignSigner signer;
 
     public OpenFeignOAuth1Interceptor(String consumerKey, PrivateKey signingKey, String baseUri) {
-        this(consumerKey, signingKey, baseUri, OAuth.DEFAULT_SIGNATURE_METHOD);
-    }
-
-    public OpenFeignOAuth1Interceptor(String consumerKey, PrivateKey signingKey, String baseUri, SignatureMethod signatureMethod) {
-        this.signer = new OpenFeignSigner(consumerKey, signingKey, baseUri, signatureMethod);
+        this.signer = new OpenFeignSigner(consumerKey, signingKey, baseUri);
     }
 
     @Override

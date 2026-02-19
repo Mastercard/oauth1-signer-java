@@ -5,22 +5,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.EnumSource;
 
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.security.PrivateKey;
-import java.security.Signature;
-import java.security.spec.AlgorithmParameterSpec;
 import java.util.*;
-import java.util.Base64;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import static org.mockito.Mockito.CALLS_REAL_METHODS;
 
 import static com.mastercard.developer.test.TestUtils.UTF8_CHARSET;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -298,110 +290,14 @@ public class OAuthTest {
   }
 
   @Test
-  public void testSignSignatureBaseString_ShouldReturnExpectedSignature_WhenUsingRsaSha256() throws Exception {
+  public void testSignSignatureBaseString() throws Exception {
     String expectedSignatureString = "IJeNKYGfUhFtj5OAPRI92uwfjJJLCej3RCMLbp7R6OIYJhtwxnTkloHQ2bgV7fks4GT/A7rkqrgUGk0ewbwIC6nS3piJHyKVc7rvQXZuCQeeeQpFzLRiH3rsb+ZS+AULK+jzDje4Fb+BQR6XmxuuJmY6YrAKkj13Ln4K6bZJlSxOizbNvt+Htnx+hNd4VgaVBeJKcLhHfZbWQxK76nMnjY7nDcM/2R6LUIR2oLG1L9m55WP3bakAvmOr392ulv1+mWCwDAZZzQ4lakDD2BTu0ZaVsvBW+mcKFxYeTq7SyTQMM4lEwFPJ6RLc8jJJ+veJXHekLVzWg4qHRtzNBLz1mA==";
-    assertEquals(expectedSignatureString, OAuth.signSignatureBaseString("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8, SignatureMethod.RSA_SHA256));
-  }
-
-  @ParameterizedTest
-  @EnumSource(SignatureMethod.class)
-  public void testGetAuthorizationHeader_ShouldUseProvidedSignatureMethod(SignatureMethod signatureMethod) throws Exception {
-    URI uri = URI.create("https://example.com/resource?query=value");
-    String method = "POST";
-    String payload = "{\"foo\":\"bar\"}";
-    Charset charset = StandardCharsets.UTF_8;
-    String consumerKey = "ckey";
-    PrivateKey signingKey = TestUtils.getTestSigningKey();
-
-    try (MockedStatic<OAuth> oauthMock = Mockito.mockStatic(OAuth.class, CALLS_REAL_METHODS)) {
-      oauthMock.when(OAuth::getNonce).thenReturn("fixed-nonce");
-      oauthMock.when(() -> OAuth.signSignatureBaseString(Mockito.anyString(), Mockito.eq(signingKey), Mockito.eq(charset), Mockito.eq(signatureMethod)))
-        .thenReturn("signed-" + signatureMethod.getOauthName());
-
-      String header = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey, signatureMethod);
-
-      oauthMock.verify(() -> OAuth.signSignatureBaseString(Mockito.anyString(), Mockito.eq(signingKey), Mockito.eq(charset), Mockito.eq(signatureMethod)));
-
-      String[] headerParts = header.substring("OAuth ".length()).split(",");
-
-      String[] expectedParts = new String[] {
-        "oauth_consumer_key=\"ckey\"",
-        "oauth_nonce=\"fixed-nonce\"",
-        "oauth_signature_method=\"" + signatureMethod.getOauthName() + "\"",
-        "oauth_version=\"1.0\"",
-        "oauth_body_hash=\"" + OAuth.getBodyHash(payload, charset, HASH_ALGORITHM) + "\"",
-        "oauth_signature=\"signed-" + signatureMethod.getOauthName() + "\""
-      };
-
-      assertThat(headerParts).hasSize(expectedParts.length + 1); // +1 for timestamp
-
-      assertThat(headerParts).contains(expectedParts);
-
-      String timestampPart = Arrays.stream(headerParts)
-        .filter(p -> p.startsWith("oauth_timestamp=")).findFirst()
-        .orElseThrow(() -> new AssertionError("oauth_timestamp not found"));
-      assertThat(timestampPart).matches("oauth_timestamp=\"\\d{10}\"");
-    }
-  }
-
-  @Test
-  public void testSignSignatureBaseString_ShouldVerify_WhenUsingRsaPssSha256() throws Exception {
-    String sbs = "baseString";
-
-    String signature = OAuth.signSignatureBaseString(sbs, TestUtils.getTestSigningKey(), StandardCharsets.UTF_8, SignatureMethod.RSA_PSS_SHA256);
-
-    AlgorithmParameterSpec params = SignatureMethod.RSA_PSS_SHA256.getAlgorithmParams();
-    Signature verifier = Signature.getInstance(SignatureMethod.RSA_PSS_SHA256.getJcaName());
-    verifier.setParameter(params);
-    verifier.initVerify(TestUtils.getTestPublicKey());
-    verifier.update(sbs.getBytes(StandardCharsets.UTF_8));
-
-    assertTrue(verifier.verify(Base64.getDecoder().decode(signature)));
+    assertEquals(expectedSignatureString, OAuth.signSignatureBaseString("baseString", TestUtils.getTestSigningKey(), StandardCharsets.UTF_8));
   }
 
   @Test(expected = IllegalStateException.class)
   public void testSignSignatureBaseString_ShouldThrowIllegalStateException_WhenInvalidKey() {
-    OAuth.signSignatureBaseString("some string", null, StandardCharsets.UTF_8, SignatureMethod.RSA_SHA256);
-  }
-
-  @Test
-  public void testSignSignatureBaseString_ShouldDelegateToDefaultSignatureMethod() throws Exception {
-    String sbs = "baseString";
-    PrivateKey signingKey = TestUtils.getTestSigningKey();
-
-    try (MockedStatic<OAuth> oauthMock = Mockito.mockStatic(OAuth.class)) {
-      oauthMock.when(() -> OAuth.signSignatureBaseString(sbs, signingKey, StandardCharsets.UTF_8, SignatureMethod.RSA_SHA256))
-              .thenReturn("expected-signature");
-      oauthMock.when(() -> OAuth.signSignatureBaseString(sbs, signingKey, StandardCharsets.UTF_8))
-              .thenCallRealMethod();
-
-      String actual = OAuth.signSignatureBaseString(sbs, signingKey, StandardCharsets.UTF_8);
-
-      assertEquals("expected-signature", actual);
-      oauthMock.verify(() -> OAuth.signSignatureBaseString(sbs, signingKey, StandardCharsets.UTF_8, SignatureMethod.RSA_SHA256));
-    }
-  }
-
-  @Test
-  public void testGetAuthorizationHeader_ShouldDelegateToDefaultSignatureMethod() throws Exception {
-    URI uri = URI.create("https://example.com/resource");
-    String method = "GET";
-    String payload = "payload";
-    Charset charset = StandardCharsets.UTF_8;
-    String consumerKey = "ckey";
-    PrivateKey signingKey = TestUtils.getTestSigningKey();
-
-    try (MockedStatic<OAuth> oauthMock = Mockito.mockStatic(OAuth.class)) {
-      oauthMock.when(() -> OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey, OAuth.DEFAULT_SIGNATURE_METHOD))
-          .thenReturn("delegated");
-      oauthMock.when(() -> OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey))
-          .thenCallRealMethod();
-
-      String header = OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey);
-
-      assertEquals("delegated", header);
-      oauthMock.verify(() -> OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey, OAuth.DEFAULT_SIGNATURE_METHOD));
-    }
+    OAuth.signSignatureBaseString("some string", null, StandardCharsets.UTF_8);
   }
 
   @Test
@@ -462,5 +358,4 @@ public class OAuthTest {
       fail("Expected " + randomNonces + " but got " + dupes.size());
     }
   }
-
 }

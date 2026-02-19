@@ -2,8 +2,6 @@ package com.mastercard.developer.interceptors;
 
 import com.google.api.client.http.HttpExecuteInterceptor;
 import com.google.api.client.http.HttpRequest;
-import com.mastercard.developer.oauth.OAuth;
-import com.mastercard.developer.oauth.SignatureMethod;
 import com.mastercard.developer.signers.GoogleApiClientSigner;
 
 import java.io.IOException;
@@ -18,11 +16,7 @@ public class HttpExecuteOAuth1Interceptor implements HttpExecuteInterceptor {
     private final GoogleApiClientSigner signer;
 
     public HttpExecuteOAuth1Interceptor(String consumerKey, PrivateKey signingKey) {
-        this(consumerKey, signingKey, OAuth.DEFAULT_SIGNATURE_METHOD);
-    }
-
-    public HttpExecuteOAuth1Interceptor(String consumerKey, PrivateKey signingKey, SignatureMethod signatureMethod) {
-        this.signer = new GoogleApiClientSigner(consumerKey, signingKey, signatureMethod);
+        this.signer = new GoogleApiClientSigner(consumerKey, signingKey);
     }
 
     public void intercept(HttpRequest request) throws IOException {

@@ -1,7 +1,5 @@
 package com.mastercard.developer.interceptors;
 
-import com.mastercard.developer.oauth.OAuth;
-import com.mastercard.developer.oauth.SignatureMethod;
 import com.mastercard.developer.signers.OkHttpSigner;
 import okhttp3.*;
 
@@ -16,11 +14,7 @@ public class OkHttpOAuth1Interceptor implements Interceptor {
     private final OkHttpSigner signer;
 
     public OkHttpOAuth1Interceptor(String consumerKey, PrivateKey signingKey) {
-        this(consumerKey, signingKey, OAuth.DEFAULT_SIGNATURE_METHOD);
-    }
-
-    public OkHttpOAuth1Interceptor(String consumerKey, PrivateKey signingKey, SignatureMethod signatureMethod) {
-        this.signer = new OkHttpSigner(consumerKey, signingKey, signatureMethod);
+        this.signer = new OkHttpSigner(consumerKey, signingKey);
     }
 
     @Override

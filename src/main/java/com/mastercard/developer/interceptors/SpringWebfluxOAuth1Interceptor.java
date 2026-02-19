@@ -1,7 +1,5 @@
 package com.mastercard.developer.interceptors;
 
-import com.mastercard.developer.oauth.OAuth;
-import com.mastercard.developer.oauth.SignatureMethod;
 import com.mastercard.developer.signers.SpringWebfluxSigner;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -19,11 +17,7 @@ public class SpringWebfluxOAuth1Interceptor implements ExchangeFilterFunction {
     private final SpringWebfluxSigner signer;
 
     public SpringWebfluxOAuth1Interceptor(String consumerKey, PrivateKey signingKey) {
-        this(consumerKey, signingKey, OAuth.DEFAULT_SIGNATURE_METHOD);
-    }
-
-    public SpringWebfluxOAuth1Interceptor(String consumerKey, PrivateKey signingKey, SignatureMethod signatureMethod) {
-        this.signer = new SpringWebfluxSigner(consumerKey, signingKey, signatureMethod);
+        this.signer = new SpringWebfluxSigner(consumerKey, signingKey);
     }
 
     @Override
