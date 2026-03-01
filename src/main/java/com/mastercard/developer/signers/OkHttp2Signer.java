@@ -15,7 +15,7 @@ import java.security.PrivateKey;
 /**
  * Utility class for signing Java OkHttp2 requests.
  */
-public class OkHttp2Signer extends AbstractSigner {
+public final class OkHttp2Signer extends AbstractSigner {
 
     public OkHttp2Signer(String consumerKey, PrivateKey signingKey) {
         super(StandardCharsets.UTF_8, consumerKey, signingKey, OAuth.DEFAULT_SIGNATURE_METHOD);

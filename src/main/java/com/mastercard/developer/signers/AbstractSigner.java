@@ -6,7 +6,7 @@ import com.mastercard.developer.oauth.SignatureMethod;
 import java.nio.charset.Charset;
 import java.security.PrivateKey;
 
-public abstract class AbstractSigner {
+public abstract sealed class AbstractSigner permits ApacheHttpClient4Signer, GoogleApiClientSigner, HttpsUrlConnectionSigner, OkHttp2Signer, OkHttpSigner, OpenFeignSigner, SpringHttpRequestSigner, SpringWebfluxSigner{
 
   protected final String consumerKey;
   protected final PrivateKey signingKey;

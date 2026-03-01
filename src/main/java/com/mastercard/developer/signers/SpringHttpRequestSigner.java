@@ -14,7 +14,7 @@ import org.springframework.http.MediaType;
 /**
  * Utility class for signing Spring RestTemplate requests.
  */
-public class SpringHttpRequestSigner extends AbstractSigner {
+public final class SpringHttpRequestSigner extends AbstractSigner {
     
     public SpringHttpRequestSigner(String consumerKey, PrivateKey signingKey) {
         super(consumerKey, signingKey);

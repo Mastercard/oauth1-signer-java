@@ -8,7 +8,7 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.security.PrivateKey;
 
-public class OpenFeignSigner extends AbstractSigner {
+public final class OpenFeignSigner extends AbstractSigner {
 
     private final String baseUri;
 

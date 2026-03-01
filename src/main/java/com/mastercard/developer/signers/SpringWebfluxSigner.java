@@ -15,7 +15,7 @@ import java.security.PrivateKey;
 /**
  * Utility class for signing Spring webflux requests
  */
-public class SpringWebfluxSigner extends AbstractSigner {
+public final class SpringWebfluxSigner extends AbstractSigner {
 
     public SpringWebfluxSigner(String consumerKey, PrivateKey signingKey) {
         super(consumerKey, signingKey);

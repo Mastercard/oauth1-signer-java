@@ -15,7 +15,7 @@ import java.security.PrivateKey;
  * Utility class for signing Google HTTP Client requests.
  * See also: https://github.com/googleapis/google-http-java-client
  */
-public class GoogleApiClientSigner extends AbstractSigner {
+public final class GoogleApiClientSigner extends AbstractSigner {
 
     public GoogleApiClientSigner(String consumerKey, PrivateKey signingKey) {
         super(consumerKey, signingKey);

@@ -9,10 +9,8 @@ import java.security.cert.CertificateException;
 /**
  * Utility class.
  */
-public final class AuthenticationUtils {
-
-    private AuthenticationUtils() {
-    }
+public enum AuthenticationUtils {
+    INSTANCE;
 
     /**
      * Load a RSA signing key out of a PKCS#12 container.
