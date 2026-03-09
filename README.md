@@ -42,7 +42,7 @@ Two signature methods are supported via the `SignatureMethod` enum:
 | `SignatureMethod.RSA_SHA256` (default) | `SHA256withRSA` | <ul><li>[RFC 8017 §8.2](https://tools.ietf.org/html/rfc8017#section-8.2)</li><li>[Java Signature Algorithms](https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html#signature-algorithms)</li></ul> |
 | `SignatureMethod.RSA_PSS_SHA256` | `RSASSA-PSS` <br>Parameters:<ul><li>Digest: SHA-256</li><li>Mask generation function: MGF1 with SHA-256</li><li>Salt length: 32 bytes</li></ul> | <ul><li>[RFC 8017 §8.1](https://tools.ietf.org/html/rfc8017#section-8.1)</li><li>[Java Signature Algorithms](https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html#signature-algorithms)</li></ul> |
 
-All [signers](#signing-http-client-request-objects), [interceptors](#integrating-with-openapi-generator-api-client-libraries), and [`OAuth.getAuthorizationHeader`](#creating-the-oauth-authorization-header) accept an optional `SignatureMethod` parameter. When omitted, `RSA-SHA256` is used by default.
+All [signers](#signing-http-client-request-objects), [interceptors](#integrating-with-openapi-generator-api-client-libraries), and [`OAuth.getAuthorizationHeader`](#creating-the-oauth-authorization-header) accept an optional `SignatureMethod` parameter. When omitted, `RSA_SHA256` is used by default.
 
 ### References <a name="references"></a>
 * [OAuth 1.0a specification](https://tools.ietf.org/html/rfc5849)
