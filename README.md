@@ -35,7 +35,7 @@ Java 17+ from 1.5.4
 
 ### Supported Signature Methods <a name="supported-signature-methods"></a>
 
-Two signature methods are supported via the `SignatureMethod` enum:
+OAuth requests are signed using one of two cryptographic methods, selected via the `SignatureMethod` enum:
 
 | Enum Value | Algorithm | References |
 |---|---|---|
