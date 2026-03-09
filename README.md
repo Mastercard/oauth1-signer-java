@@ -15,6 +15,7 @@
 ## Table of Contents
 - [Overview](#overview)
   * [Compatibility](#compatibility)
+  * [Supported Signature Methods](#supported-signature-methods)
   * [References](#references)
   * [Versioning and Deprecation Policy](#versioning)
 - [Usage](#usage)
@@ -31,6 +32,17 @@ Zero dependency library for generating a Mastercard API compliant OAuth signatur
 ### Compatibility <a name="compatibility"></a>
 Java 11+ till version 1.5.3 included.
 Java 17+ from 1.5.4
+
+### Supported Signature Methods <a name="supported-signature-methods"></a>
+
+Two signature methods are supported via the `SignatureMethod` enum:
+
+| Signature Method | Enum Value | Algorithm | References |
+|---|---|---|---|
+| **RSA-SHA256** (default) | `SignatureMethod.RSA_SHA256` | `SHA256withRSA` | <ul><li>[RFC 8017 §8.2](https://tools.ietf.org/html/rfc8017#section-8.2)</li><li>[Java Signature Algorithms](https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html#signature-algorithms)</li></ul> |
+| **RSA-PSS** | `SignatureMethod.RSA_PSS_SHA256` | `RSASSA-PSS`<br>Params: SHA-256 digest, MGF1+SHA-256, 32-byte salt | <ul><li>[RFC 8017 §8.1](https://tools.ietf.org/html/rfc8017#section-8.1)</li><li>[Java Signature Algorithms](https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html#signature-algorithms)</li></ul> |
+
+All [signers](#signing-http-client-request-objects), [interceptors](#integrating-with-openapi-generator-api-client-libraries), and [`OAuth.getAuthorizationHeader`](#creating-the-oauth-authorization-header) accept an optional `SignatureMethod` parameter. When omitted, `RSA-SHA256` is used as the default.
 
 ### References <a name="references"></a>
 * [OAuth 1.0a specification](https://tools.ietf.org/html/rfc5849)
